@@ -508,13 +508,13 @@
             <form id="form-product-execution">
                 <input type="hidden" id="prod-edit-id">
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                    <div class="form-group"><label class="form-label">Código SKU</label><input type="text" id="prod-code" class="form-control" required></div>
+                    <div class="form-group"><label class="form-label">Código SKU</label><input type="text" id="prod-code" class="form-control"></div>
                     <div class="form-group"><label class="form-label">Nombre</label><input type="text" id="prod-name" class="form-control" required></div>
                 </div>
                 <div class="form-group"><label class="form-label">Ficha Descriptiva</label><textarea id="prod-desc" class="form-control" rows="2"></textarea></div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                    <div class="form-group"><label class="form-label">Taxonomía Relacionada</label><select id="prod-cat" class="form-control" required></select></div>
-                    <div class="form-group"><label class="form-label">Marca</label><input type="text" id="prod-brand" class="form-control" required></div>
+                    <div class="form-group"><label class="form-label">Taxonomía Relacionada</label><select id="prod-cat" class="form-control"></select></div>
+                    <div class="form-group"><label class="form-label">Marca</label><input type="text" id="prod-brand" class="form-control"></div>
                 </div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                     <div class="form-group"><label class="form-label">Costo de Adquisición</label><input type="number" step="0.01" id="prod-price-buy" class="form-control" required></div>
@@ -525,8 +525,8 @@
                     <div class="form-group"><label class="form-label">Mínimo de Alerta</label><input type="number" id="prod-stock-min" class="form-control" required value="5"></div>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Imagen URL</label>
-                    <input type="text" id="prod-img-url" class="form-control" placeholder="https://">
+                    <label class="form-label">Cargar Imagen desde Archivos</label>
+                    <input type="file" id="prod-img-file" class="form-control" accept="image/*" style="padding: 6px 12px;">
                 </div>
                 <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px;">
                     <button type="button" class="btn btn-secondary modal-close-trigger">Cerrar</button>
@@ -661,7 +661,9 @@
             DOM.tbodyProducts.innerHTML = '';
             
             const filtered = stateMemory.products.filter(p => {
-                const matchQuery = !searchQuery || p.code.toLowerCase().includes(searchQuery) || p.name.toLowerCase().includes(searchQuery);
+                const codeMatch = p.code ? p.code.toLowerCase().includes(searchQuery) : false;
+                const nameMatch = p.name ? p.name.toLowerCase().includes(searchQuery) : false;
+                const matchQuery = !searchQuery || codeMatch || nameMatch;
                 const matchCat = !categoryFilter || p.category === categoryFilter;
                 return matchQuery && matchCat;
             });
@@ -675,10 +677,10 @@
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td><img src="${p.imageUrl || fallbackImg}" class="product-thumbnail" onerror="this.src='${fallbackImg}'"></td>
-                    <td>${p.code}</td>
+                    <td>${p.code || 'N/A'}</td>
                     <td><strong>${p.name}</strong></td>
-                    <td>${p.category}</td>
-                    <td>${p.brand}</td>
+                    <td>${p.category || 'Sin categoría'}</td>
+                    <td>${p.brand || 'N/A'}</td>
                     <td>Q${Number(p.priceBuy).toFixed(2)}</td>
                     <td>Q${Number(p.priceSell).toFixed(2)}</td>
                     <td>${p.stock}</td>
@@ -740,7 +742,7 @@
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>${dateStr}</td>
-                    <td>${l.productCode}</td>
+                    <td>${l.productCode || 'N/A'}</td>
                     <td>${l.productName}</td>
                     <td>${vectorBadge}</td>
                     <td><strong>${l.quantity}</strong></td>
@@ -794,7 +796,10 @@
             });
 
             const catCounts = {};
-            stateMemory.products.forEach(p => { catCounts[p.category] = (catCounts[p.category] || 0) + 1; });
+            stateMemory.products.forEach(p => { 
+                const catName = p.category || 'Sin categoría';
+                catCounts[catName] = (catCounts[catName] || 0) + 1; 
+            });
 
             if (chartInstances.categories) chartInstances.categories.destroy();
             const ctx2 = document.getElementById('chart-categories').getContext('2d');
@@ -812,46 +817,69 @@
             });
         }
 
-        // Database Write Operations
+        // Database Write Operations (LÓGICA CONVERSIÓN DE IMAGEN FILE)
         DOM.formProduct.addEventListener('submit', async (e) => {
             e.preventDefault();
             const targetId = document.getElementById('prod-edit-id').value;
-            const data = {
-                code: document.getElementById('prod-code').value.trim(),
-                name: document.getElementById('prod-name').value.trim(),
-                description: document.getElementById('prod-desc').value.trim(),
-                category: document.getElementById('prod-cat').value,
-                brand: document.getElementById('prod-brand').value.trim(),
-                priceBuy: Number(document.getElementById('prod-price-buy').value),
-                priceSell: Number(document.getElementById('prod-price-sell').value),
-                stock: Number(document.getElementById('prod-stock').value),
-                stockMin: Number(document.getElementById('prod-stock-min').value),
-                imageUrl: document.getElementById('prod-img-url').value.trim(),
-                updatedAt: serverTimestamp()
+            const fileInput = document.getElementById('prod-img-file');
+            
+            const processSave = async (imgDataUrl = '') => {
+                const data = {
+                    code: document.getElementById('prod-code').value.trim(),
+                    name: document.getElementById('prod-name').value.trim(),
+                    description: document.getElementById('prod-desc').value.trim(),
+                    category: document.getElementById('prod-cat').value,
+                    brand: document.getElementById('prod-brand').value.trim(),
+                    priceBuy: Number(document.getElementById('prod-price-buy').value),
+                    priceSell: Number(document.getElementById('prod-price-sell').value),
+                    stock: Number(document.getElementById('prod-stock').value),
+                    stockMin: Number(document.getElementById('prod-stock-min').value),
+                    updatedAt: serverTimestamp()
+                };
+
+                // Si se cargó una nueva imagen la guarda, de lo contrario conserva la anterior en edición o queda vacía
+                if (imgDataUrl) {
+                    data.imageUrl = imgDataUrl;
+                } else if (targetId) {
+                    const existingProd = stateMemory.products.find(item => item.id === targetId);
+                    if (existingProd && existingProd.imageUrl) data.imageUrl = existingProd.imageUrl;
+                }
+
+                if(targetId) {
+                    await updateDoc(doc(db, "products", targetId), data);
+                } else {
+                    data.createdAt = serverTimestamp();
+                    await addDoc(collection(db, "products"), data);
+                }
+                closeAllModals();
             };
-            if(targetId) {
-                await updateDoc(doc(db, "products", targetId), data);
+
+            // Lector de archivos físicos si el usuario seleccionó una imagen
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = async function(event) {
+                    await processSave(event.target.result);
+                };
+                reader.readAsDataURL(fileInput.files[0]);
             } else {
-                data.createdAt = serverTimestamp();
-                await addDoc(collection(db, "products"), data);
+                await processSave();
             }
-            closeAllModals();
         });
 
         function loadProductToModal(id) {
             const p = stateMemory.products.find(item => item.id === id);
             if(!p) return;
             document.getElementById('prod-edit-id').value = p.id;
-            document.getElementById('prod-code').value = p.code;
+            document.getElementById('prod-code').value = p.code || '';
             document.getElementById('prod-name').value = p.name;
             document.getElementById('prod-desc').value = p.description || '';
-            document.getElementById('prod-cat').value = p.category;
-            document.getElementById('prod-brand').value = p.brand;
+            document.getElementById('prod-cat').value = p.category || '';
+            document.getElementById('prod-brand').value = p.brand || '';
             document.getElementById('prod-price-buy').value = p.priceBuy;
             document.getElementById('prod-price-sell').value = p.priceSell;
             document.getElementById('prod-stock').value = p.stock;
             document.getElementById('prod-stock-min').value = p.stockMin;
-            document.getElementById('prod-img-url').value = p.imageUrl || '';
+            document.getElementById('prod-img-file').value = ''; // Resetea el input file por seguridad
             document.getElementById('modal-product-title').innerText = "Modificar Atributos de Ítem";
             openModal(DOM.modalProduct);
         }
@@ -933,7 +961,7 @@
             const delta = type === 'IN' ? qty : -qty;
             await updateDoc(doc(db, "products", prodId), { stock: increment(delta) });
             await addDoc(collection(db, "ledger"), {
-                productId: prodId, productCode: p.code, productName: p.name,
+                productId: prodId, productCode: p.code || '', productName: p.name,
                 type, quantity: qty, concept, timestamp: serverTimestamp()
             });
 
@@ -950,7 +978,7 @@
                 doc.autoTable({
                     startY: 20,
                     head: [['Código', 'Nombre', 'Categoría', 'Precio', 'Stock']],
-                    body: stateMemory.products.map(p => [p.code, p.name, p.category, p.priceSell, p.stock])
+                    body: stateMemory.products.map(p => [p.code || 'N/A', p.name, p.category || 'N/A', p.priceSell, p.stock])
                 });
                 doc.save('inventario.pdf');
             }
@@ -987,7 +1015,7 @@
         document.querySelectorAll('.modal-close-trigger').forEach(b => b.addEventListener('click', closeAllModals));
         document.querySelectorAll('.modal-overlay').forEach(m => m.addEventListener('click', e => { if (e.target === m) closeAllModals(); }));
 
-        // ── Mobile Sidebar (CON PROTECCIÓN CONTRA TERMINACIONES NULL) ──
+        // Mobile Sidebar
         function closeSidebar() {
             if (DOM.appSidebar) DOM.appSidebar.classList.remove('open');
             if (DOM.sidebarBackdrop) DOM.sidebarBackdrop.classList.remove('visible');
@@ -1004,11 +1032,11 @@
             DOM.sidebarBackdrop.addEventListener('click', closeSidebar);
         }
 
-        // ── Search / Filter ──
+        // Search / Filter
         DOM.searchProd.addEventListener('input', renderProductsModule);
         DOM.filterCat.addEventListener('change', renderProductsModule);
 
-        // ── Live Clock ──
+        // Live Clock
         setInterval(() => {
             const now = new Date();
             DOM.liveClock.innerText = now.toLocaleString('es-GT', { weekday:'short', year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit'});
@@ -1028,7 +1056,7 @@
 
         function populateLedgerProductSelect() {
             let options = '<option value="" disabled selected>Seleccione producto...</option>';
-            stateMemory.products.forEach(p => { options += `<option value="${p.id}">${p.code} - ${p.name} (${p.stock})</option>`; });
+            stateMemory.products.forEach(p => { options += `<option value="${p.id}">${p.code || 'S/N'} - ${p.name} (${p.stock})</option>`; });
             DOM.ledgerProdSelect.innerHTML = options;
         }
 
