@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" data-theme="dark" data-bg="space">
+<html lang="es" data-theme="dark" data-bg="space" data-sidebar="open">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -24,39 +24,56 @@
             --radius-lg: 14px;
             --radius-md: 10px;
             --radius-sm: 6px;
-            
-            /* Colores de Acento Estables */
-            --accent: #00f0ff;
-            --accent-glow: rgba(0, 240, 255, 0.15);
-            --text-primary: #f3f4f6;
-            --text-secondary: #9ca3af;
-            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            --sidebar-width: 270px;
+            --accent: #00b4d8;
         }
 
-        /* Configuración de Fondos Oscuros Conmutables */
+        /* PALETAS DE COLORES SINCRONIZADAS (FONDOS OSCUROS Y CLAROS) */
+        /* 1. Oscuros */
         [data-bg="space"] {
             --bg-base: #0b0f17;
             --bg-surface: #111827;
             --border-color: #1f2937;
             --bg-hover: #1f2937;
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            --invert-btn: #f3f4f6;
+            --invert-text: #0b0f17;
         }
         [data-bg="oled"] {
             --bg-base: #000000;
             --bg-surface: #0a0a0a;
             --border-color: #1c1c1c;
             --bg-hover: #171717;
+            --text-primary: #ffffff;
+            --text-secondary: #a3a3a3;
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+            --invert-btn: #ffffff;
+            --invert-text: #000000;
         }
-        [data-bg="navy"] {
-            --bg-base: #050b14;
-            --bg-surface: #0b132b;
-            --border-color: #1c2541;
-            --bg-hover: #1c2541;
+        /* 2. Claros */
+        [data-bg="white"] {
+            --bg-base: #f4f6f9;
+            --bg-surface: #ffffff;
+            --border-color: #e2e8f0;
+            --bg-hover: #f1f5f9;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --card-shadow: 0 10px 25px rgba(99, 102, 241, 0.05);
+            --invert-btn: #1e293b;
+            --invert-text: #ffffff;
         }
-        [data-bg="forest"] {
-            --bg-base: #040806;
-            --bg-surface: #0b140f;
-            --border-color: #17251d;
-            --bg-hover: #17251d;
+        [data-bg="light-blue"] {
+            --bg-base: #e0f2fe;
+            --bg-surface: #f0f9ff;
+            --border-color: #bae6fd;
+            --bg-hover: #e0f2fe;
+            --text-primary: #0369a1;
+            --text-secondary: #0ea5e9;
+            --card-shadow: 0 10px 25px rgba(14, 165, 233, 0.1);
+            --invert-btn: #0369a1;
+            --invert-text: #ffffff;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'DM Sans', sans-serif; }
@@ -77,57 +94,56 @@
             border-radius: var(--radius-md); font-weight: 600; cursor: pointer; display: inline-flex; align-items: center;
             justify-content: center; gap: 10px; margin-top: 24px; transition: var(--transition-smooth);
         }
-        .auth-btn:hover { transform: translateY(-1px); }
 
-        /* ARQUITECTURA GENERAL */
+        /* ARQUITECTURA GENERAL Y SIDEBAR DINÁMICO */
         #app-layout { display: flex; min-height: 100vh; opacity: 0; transition: opacity 0.4s ease; }
         #app-layout.authenticated { opacity: 1; }
 
-        /* REESTRUCTURACIÓN DINÁMICA DEL MENÚ LATERAL (SIDEBAR) */
         sidebar {
-            width: 270px; background-color: var(--bg-surface); border-right: 1px solid var(--border-color);
+            width: var(--sidebar-width); background-color: var(--bg-surface); border-right: 1px solid var(--border-color);
             display: flex; flex-direction: column; position: fixed; height: 100vh; z-index: 100; transition: var(--transition-smooth);
+            left: 0;
         }
+        
+        /* Estado Colapsado del Menú Lateral */
+        [data-sidebar="closed"] sidebar { left: calc(-1 * var(--sidebar-width)); }
+        [data-sidebar="closed"] main { margin-left: 0; }
+
         .sidebar-header { padding: 28px 24px; display: flex; align-items: center; gap: 14px; border-bottom: 1px solid var(--border-color); }
         .sidebar-title { font-weight: 700; font-size: 1.3rem; letter-spacing: 0.5px; }
         
         .nav-menu { list-style: none; padding: 24px 14px; display: flex; flex-direction: column; gap: 6px; }
-        
         .nav-item a {
             display: flex; align-items: center; gap: 14px; padding: 12px 16px; color: var(--text-secondary);
-            text-decoration: none; border-radius: var(--radius-md); font-weight: 500; font-size: 0.95rem;
-            position: relative; transition: var(--transition-smooth);
+            text-decoration: none; border-radius: var(--radius-md); font-weight: 500; font-size: 0.95rem; transition: var(--transition-smooth);
         }
-        .nav-item a i { font-size: 1.1rem; width: 20px; text-align: center; transition: var(--transition-smooth); }
+        .nav-item a i { font-size: 1.1rem; width: 20px; text-align: center; }
         
-        /* Efectos Dinámicos de Selección y Hover */
-        .nav-item a:hover {
-            color: var(--text-primary);
-            background-color: var(--bg-hover);
-            padding-left: 20px;
-        }
-        .nav-item a:hover i { color: var(--accent); transform: scale(1.1); }
+        .nav-item a:hover { color: var(--text-primary); background-color: var(--bg-hover); padding-left: 20px; }
         
         .nav-item.active a {
-            color: var(--bg-base);
-            background-color: var(--text-primary);
+            color: var(--invert-text);
+            background-color: var(--invert-btn);
             font-weight: 600;
-            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+            box-shadow: var(--card-shadow);
         }
-        .nav-item.active a i { color: var(--bg-base); }
-        .nav-item.active a:hover { padding-left: 16px; color: var(--bg-base); background-color: var(--text-primary); }
-        .nav-item.active a:hover i { color: var(--bg-base); transform: none; }
 
-        main { margin-left: 270px; flex-grow: 1; padding: 40px; transition: var(--transition-smooth); }
-        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
+        main { margin-left: var(--sidebar-width); flex-grow: 1; padding: 40px; transition: var(--transition-smooth); }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; gap: 16px; }
+
+        /* BOTÓN DE MENÚ DINÁMICO */
+        .menu-toggle-btn {
+            background-color: var(--bg-surface); border: 1px solid var(--border-color); color: var(--text-primary);
+            padding: 10px 14px; border-radius: var(--radius-md); cursor: pointer; font-size: 1.1rem; transition: var(--transition-smooth);
+        }
+        .menu-toggle-btn:hover { background-color: var(--bg-hover); }
 
         /* CONTROLES DE INTERFAZ Y ESTILOS */
-        .style-hub { display: flex; align-items: center; gap: 12px; }
+        .style-hub { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
         .bg-dropdown {
             background-color: var(--bg-surface); color: var(--text-primary); border: 1px solid var(--border-color);
             padding: 8px 12px; border-radius: var(--radius-md); font-size: 0.85rem; cursor: pointer; outline: none; transition: var(--transition-smooth);
         }
-        .bg-dropdown:focus { border-color: var(--accent); }
         
         .user-profile {
             display: flex; align-items: center; gap: 10px; background-color: var(--bg-surface);
@@ -141,9 +157,8 @@
             background-color: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-lg);
             padding: 24px; box-shadow: var(--card-shadow); transition: var(--transition-smooth);
         }
-        .metric-card:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.15); }
         .metric-header { display: flex; justify-content: space-between; align-items: center; color: var(--text-secondary); font-size: 0.85rem; font-weight: 600; }
-        .metric-value { font-size: 2rem; font-weight: 700; margin-top: 8px; }
+        .metric-value { font-size: 1.8rem; font-weight: 700; margin-top: 8px; }
 
         .glass-panel { background-color: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--card-shadow); margin-bottom: 24px; }
         .panel-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 20px; }
@@ -155,33 +170,29 @@
             width: 100%; padding: 11px 14px; background-color: var(--bg-base); border: 1px solid var(--border-color);
             border-radius: var(--radius-md); color: var(--text-primary); font-size: 0.9rem; transition: var(--transition-smooth);
         }
-        .form-control:focus { outline: none; border-color: var(--text-primary); }
 
         /* EXCEL ZONA DE CARGA */
         .excel-dropzone {
             border: 2px dashed var(--border-color); border-radius: var(--radius-lg); padding: 36px; text-align: center;
             background-color: var(--bg-base); cursor: pointer; transition: var(--transition-smooth); margin-bottom: 20px;
         }
-        .excel-dropzone:hover { border-color: var(--accent); background-color: var(--bg-hover); }
-        .excel-dropzone i { font-size: 2.2rem; color: var(--text-secondary); margin-bottom: 12px; transition: var(--transition-smooth); }
-        .excel-dropzone:hover i { transform: translateY(-3px); color: #10b981; }
+        .excel-dropzone i { font-size: 2.2rem; color: var(--text-secondary); margin-bottom: 12px; }
 
         /* TABLAS Y BOTONES */
         .btn {
             padding: 10px 20px; border-radius: var(--radius-md); font-weight: 600; font-size: 0.9rem;
             cursor: pointer; border: 1px solid transparent; transition: var(--transition-smooth); display: inline-flex; align-items: center; gap: 8px;
         }
-        .btn-primary { background-color: var(--text-primary); color: var(--bg-base); }
-        .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+        .btn-primary { background-color: var(--invert-btn); color: var(--invert-text); box-shadow: var(--card-shadow); }
         .btn-secondary { background-color: transparent; border: 1px solid var(--border-color); color: var(--text-primary); }
         .btn-secondary:hover { background-color: var(--border-color); }
         
         .table-responsive { width: 100%; overflow-x: auto; }
         .enterprise-table { width: 100%; border-collapse: collapse; text-align: left; }
-        .enterprise-table th { padding: 14px; border-bottom: 1px solid var(--border-color); color: var(--text-secondary); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .enterprise-table th { padding: 14px; border-bottom: 1px solid var(--border-color); color: var(--text-secondary); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; }
         .enterprise-table td { padding: 14px; border-bottom: 1px solid var(--border-color); font-size: 0.9rem; }
         
-        .product-thumbnail { width: 42px; height: 42px; border-radius: var(--radius-sm); object-fit: cover; border: 1px solid var(--border-color); }
+        .product-thumbnail { width: 42px; height: 42px; border-radius: var(--radius-sm); object-fit: cover; border: 1px solid var(--border-color); background-color: var(--bg-base); }
         .badge { padding: 4px 8px; border-radius: var(--radius-sm); font-size: 0.75rem; font-weight: 600; }
         .badge-success { background-color: rgba(16, 185, 129, 0.1); color: #10b981; }
         .badge-warning { background-color: rgba(245, 158, 11, 0.1); color: #f59e0b; }
@@ -195,11 +206,12 @@
             z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: var(--transition-smooth);
         }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
-        .modal-window { background-color: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-lg); width: 100%; max-width: 520px; padding: 32px; box-shadow: var(--card-shadow); transform: translateY(20px); transition: var(--transition-smooth); }
+        .modal-window { background-color: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-lg); width: 100%; max-width: 520px; padding: 32px; box-shadow: var(--card-shadow); transform: translateY(20px); transition: var(--transition-smooth); color: var(--text-primary); }
         .modal-overlay.active .modal-window { transform: translateY(0); }
 
         @media (max-width: 1024px) {
-            sidebar { transform: translateX(-100%); }
+            sidebar { left: calc(-1 * var(--sidebar-width)); }
+            [data-sidebar="open"] sidebar { left: 0; }
             main { margin-left: 0; padding: 20px; }
             .charts-row { grid-template-columns: 1fr; }
         }
@@ -210,7 +222,7 @@
     <div id="auth-gateway">
         <div class="auth-card">
             <div class="auth-brand">SOUVREIGN</div>
-            <p style="color: var(--text-secondary); font-size: 0.9rem;">Gestión de Inventario Profesional</p>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 4px;">Inventarios y Control de Reorden</p>
             <button class="auth-btn" id="btn-google-login">
                 <i class="fa-brands fa-google"></i> Iniciar sesión con Google
             </button>
@@ -237,18 +249,27 @@
 
         <main>
             <div class="top-bar">
-                <div>
-                    <h1 id="page-title" style="font-weight: 600; font-size: 1.5rem;">Inicio</h1>
-                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 2px;" id="live-clock">--:--</p>
+                <div style="display: flex; align-items: center; gap: 16px;">
+                    <button class="menu-toggle-btn" id="sidebar-toggle-trigger">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <div>
+                        <h1 id="page-title" style="font-weight: 600; font-size: 1.5rem;">Inicio</h1>
+                        <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 2px;" id="live-clock">--:--</p>
+                    </div>
                 </div>
                 
                 <div class="style-hub">
-                    <label style="font-size: 0.8rem; color: var(--text-secondary);">Fondo:</label>
+                    <label style="font-size: 0.8rem; color: var(--text-secondary);">Tema:</label>
                     <select id="bg-selector" class="bg-dropdown">
-                        <option value="space">🌌 Gris Espacial</option>
-                        <option value="oled">🖤 Negro Absoluto (OLED)</option>
-                        <option value="navy">💙 Azul Profundo</option>
-                        <option value="forest">💚 Verde Oscuro</option>
+                        <optgroup label="Modo Oscuro">
+                            <option value="space" selected>🌌 Gris Espacial</option>
+                            <option value="oled">🖤 Negro Absoluto (OLED)</option>
+                        </optgroup>
+                        <optgroup label="Modo Claro">
+                            <option value="white">⚪ Blanco Puro</option>
+                            <option value="light-blue">🔷 Azul Confort</option>
+                        </optgroup>
                     </select>
                     
                     <div class="user-profile">
@@ -292,7 +313,7 @@
 
             <div id="view-products" class="app-view" style="display: none;">
                 <div class="glass-panel" style="padding: 16px; margin-bottom: 20px; display: flex; gap: 16px; align-items: center; justify-content: space-between; flex-wrap: wrap;">
-                    <input type="text" id="search-prod" class="form-control" placeholder="Buscar por nombre o SKU..." style="max-width: 350px; margin-bottom: 0;">
+                    <input type="text" id="search-prod" class="form-control" placeholder="Buscar por nombre o SKU..." style="max-width: 350px; margin-bottom: 0; background-color: var(--bg-base);">
                     <div style="display: flex; gap: 12px;">
                         <button class="btn btn-secondary" onclick="exportToPDF()"><i class="fa-solid fa-file-pdf"></i> Exportar PDF</button>
                         <button class="btn btn-primary" id="btn-open-prod-modal"><i class="fa-solid fa-plus"></i> Agregar Producto</button>
@@ -325,7 +346,7 @@
                 <div class="glass-panel">
                     <div class="panel-title">Importación Masiva desde Excel</div>
                     <p style="color: var(--text-secondary); margin-bottom: 20px; font-size: 0.9rem;">
-                        Sube un archivo Excel (.xlsx o .xls). El sistema leerá las filas y las añadirá directamente al inventario activo. Columnas aceptadas: <strong>Código, Nombre, Marca, Costo, Precio, Stock, Minimo</strong>.
+                        Sube un archivo Excel (.xlsx o .xls). Columnas aceptadas: <strong>Código, Nombre, Marca, Costo, Precio, Stock, Minimo</strong>. Todos los valores monetarios se procesarán en Quetzales (Q).
                     </p>
                     
                     <div class="excel-dropzone" id="excel-drop-area">
@@ -384,7 +405,7 @@
                 <div class="glass-panel">
                     <div class="panel-title">Sugerencias de Compra Automática (Bajo Stock)</div>
                     <p style="color: var(--text-secondary); margin-bottom: 20px; font-size: 0.9rem;">
-                        Esta tabla muestra automáticamente los productos que han alcanzado o bajado de su nivel mínimo estipulado. Calcula la cantidad sugerida para volver a estar abastecido.
+                        Esta tabla muestra automáticamente los productos que han alcanzado o bajado de su nivel mínimo estipulado. Calcula la cantidad sugerida para volver a estar abastecido de forma inmediata.
                     </p>
                     <div class="table-responsive">
                         <table class="enterprise-table">
@@ -421,8 +442,8 @@
                 <div class="form-group"><label class="form-label">Marca</label><input type="text" id="prod-brand" class="form-control"></div>
                 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                    <div class="form-group"><label class="form-label">Costo de Compra</label><input type="number" step="0.01" id="prod-price-buy" class="form-control" required></div>
-                    <div class="form-group"><label class="form-label">Precio de Venta</label><input type="number" step="0.01" id="prod-price-sell" class="form-control" required></div>
+                    <div class="form-group"><label class="form-label">Costo de Compra (Q)</label><input type="number" step="0.01" id="prod-price-buy" class="form-control" required></div>
+                    <div class="form-group"><label class="form-label">Precio de Venta (Q)</label><input type="number" step="0.01" id="prod-price-sell" class="form-control" required></div>
                 </div>
                 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
@@ -432,7 +453,7 @@
                 
                 <div class="form-group">
                     <label class="form-label">Imagen del Producto (Opcional)</label>
-                    <input type="file" id="prod-img-file" class="form-control" accept="image/*" style="padding: 6px 12px;">
+                    <input type="file" id="prod-img-file" class="form-control" accept="image/*" style="padding: 6px 12px; background-color: var(--bg-base);">
                 </div>
                 
                 <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px;">
@@ -471,7 +492,7 @@
         let memory = { products: [], suppliers: [] };
         let charts = { brands: null, status: null };
         let currentExcelBuffer = null;
-        const fallbackImg = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='1'><rect width='20' height='20' x='2' y='2' rx='2'/><path d='M12 2v20M2 12h20'/></svg>";
+        const fallbackImg = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='1'><rect width='20' height='20' x='2' y='2' rx='2'/><path d='M12 2v20M2 12h20'/></svg>";
 
         // Elementos DOM
         const DOM = {
@@ -503,8 +524,16 @@
             excelPreviewArea: document.getElementById('excel-preview-area'),
             excelPreviewThead: document.getElementById('excel-preview-thead'),
             excelPreviewTbody: document.getElementById('excel-preview-tbody'),
-            btnExecuteExcelUpload: document.getElementById('btn-execute-excel-upload')
+            btnExecuteExcelUpload: document.getElementById('btn-execute-excel-upload'),
+            sidebarToggleTrigger: document.getElementById('sidebar-toggle-trigger')
         };
+
+        // MANEJO DINÁMICO DEL MENÚ LATERAL (OCULTAR / MOSTRAR)
+        DOM.sidebarToggleTrigger.addEventListener('click', () => {
+            const currentStatus = document.documentElement.getAttribute('data-sidebar');
+            const newStatus = currentStatus === 'open' ? 'closed' : 'open';
+            document.documentElement.setAttribute('data-sidebar', newStatus);
+        });
 
         // ENLACE DE AUTENTICACIÓN GOOGLE
         DOM.btnGoogleLogin.addEventListener('click', async () => {
@@ -530,9 +559,10 @@
             }
         });
 
-        // Cambiar el Fondo Confortable
+        // Sincronización del Selector de Temas
         DOM.bgSelector.addEventListener('change', (e) => {
             document.documentElement.setAttribute('data-bg', e.target.value);
+            setTimeout(() => { renderCharts(); }, 200); // Forzar repintado de gráficas con contraste correcto
         });
 
         // PROCESAR HOJAS DE EXCEL
@@ -558,7 +588,6 @@
                     Swal.fire('Atención', 'El archivo Excel está vacío.', 'warning');
                     return;
                 }
-                
                 renderExcelTablePreview(json);
             };
             reader.readAsArrayBuffer(file);
@@ -600,19 +629,18 @@
                 for(const item of currentExcelBuffer) {
                     await addDoc(collection(db, "products"), {
                         ...item,
-                        description: 'Agregado por importación de Excel',
+                        description: 'Importado por archivo Excel masivo',
                         imageUrl: '',
                         createdAt: serverTimestamp(),
                         updatedAt: serverTimestamp()
                     });
                 }
-                Swal.fire('Éxito', `Se importaron ${currentExcelBuffer.length} productos.`, 'success');
+                Swal.fire('Éxito', `Se importaron ${currentExcelBuffer.length} productos en Quetzales de forma exitosa.`, 'success');
                 DOM.excelPreviewArea.style.display = 'none';
                 currentExcelBuffer = null;
-                // Simulación de click dinámico de navegación
                 document.querySelector('[data-target="view-products"]').click();
             } catch (err) {
-                Swal.fire('Error', 'Hubo un problema al subir a Firebase.', 'error');
+                Swal.fire('Error', 'Hubo un problema al escribir en Firebase.', 'error');
             }
         });
 
@@ -634,64 +662,57 @@
             });
         }
 
-        // CONTROL DE REGISTRO / EDICIÓN CON COMPRESIÓN DE IMAGEN AUTOMÁTICA (SOLUCIÓN DEFINITIVA)
+        // SOLUCIÓN AL ERROR DE CARGA: FLUJO ASÍNCRONO SEPARADO Y ROBUSTO PARA EVITAR INTERRUPCIONES
         DOM.formProduct.addEventListener('submit', async (e) => {
             e.preventDefault();
             
             const targetId = document.getElementById('prod-edit-id').value;
             const fileInput = document.getElementById('prod-img-file');
 
-            const saveProcess = async (base64String = '') => {
-                const payload = {
-                    code: document.getElementById('prod-code').value.trim(),
-                    name: document.getElementById('prod-name').value.trim(),
-                    description: document.getElementById('prod-desc').value.trim(),
-                    brand: document.getElementById('prod-brand').value.trim(),
-                    priceBuy: Number(document.getElementById('prod-price-buy').value || 0),
-                    priceSell: Number(document.getElementById('prod-price-sell').value || 0),
-                    stock: Number(document.getElementById('prod-stock').value || 0),
-                    stockMin: Number(document.getElementById('prod-stock-min').value || 0),
-                    updatedAt: serverTimestamp()
-                };
+            // Payload inicial base estructurado limpiamente
+            const payload = {
+                code: document.getElementById('prod-code').value.trim(),
+                name: document.getElementById('prod-name').value.trim(),
+                description: document.getElementById('prod-desc').value.trim(),
+                brand: document.getElementById('prod-brand').value.trim(),
+                priceBuy: Number(document.getElementById('prod-price-buy').value || 0),
+                priceSell: Number(document.getElementById('prod-price-sell').value || 0),
+                stock: Number(document.getElementById('prod-stock').value || 0),
+                stockMin: Number(document.getElementById('prod-stock-min').value || 0),
+                updatedAt: serverTimestamp()
+            };
 
-                if (base64String) {
-                    payload.imageUrl = base64String;
-                }
-
+            // Proceso interno finalizador que sube directo a Firebase
+            const commitToFirebase = async (finalPayload) => {
                 try {
                     if (targetId) {
-                        await updateDoc(doc(db, "products", targetId), payload);
+                        await updateDoc(doc(db, "products", targetId), finalPayload);
                         Swal.fire('Actualizado', 'Producto modificado con éxito.', 'success');
                     } else {
-                        if (!base64String) payload.imageUrl = '';
-                        payload.createdAt = serverTimestamp();
-                        await addDoc(collection(db, "products"), payload);
+                        finalPayload.createdAt = serverTimestamp();
+                        await addDoc(collection(db, "products"), finalPayload);
                         Swal.fire('Registrado', 'Nuevo producto agregado al inventario.', 'success');
                     }
                     closeProductModal();
                 } catch (error) {
-                    console.error("Error al guardar producto: ", error);
-                    Swal.fire('Error', 'No se pudieron escribir los datos en Firestore.', 'error');
+                    console.error("Error crítico de guardado:", error);
+                    Swal.fire('Error', 'No se pudieron escribir los datos en la base de datos.', 'error');
                 }
             };
 
-            // Compresión del lado del cliente antes del envío si hay una imagen cargada
-            if (fileInput.files && fileInput.files[0]) {
-                const file = fileInput.files[0];
+            // Validación segura de lectura de archivos
+            if (fileInput && fileInput.files && fileInput.files[0]) {
                 const reader = new FileReader();
-                
-                reader.onload = (event) => {
+                reader.onload = function(event) {
                     const img = new Image();
                     img.src = event.target.result;
-                    
-                    img.onload = () => {
+                    img.onload = function() {
                         const canvas = document.createElement('canvas');
                         const ctx = canvas.getContext('2d');
+                        const MAX_WIDTH = 450;
                         
-                        const MAX_WIDTH = 500; // Resolución perfecta para miniaturas
                         let width = img.width;
                         let height = img.height;
-                        
                         if (width > MAX_WIDTH) {
                             height = Math.round((height * MAX_WIDTH) / width);
                             width = MAX_WIDTH;
@@ -701,14 +722,15 @@
                         canvas.height = height;
                         ctx.drawImage(img, 0, 0, width, height);
                         
-                        // Compresión al 60% de calidad en formato JPEG
-                        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.6);
-                        saveProcess(compressedBase64);
+                        // Compresión controlada para no pasar el límite de Firestore jamás
+                        payload.imageUrl = canvas.toDataURL('image/jpeg', 0.55);
+                        commitToFirebase(payload);
                     };
                 };
-                reader.readAsDataURL(file);
+                reader.readAsDataURL(fileInput.files[0]);
             } else {
-                await saveProcess();
+                // Si no se añade o altera la foto, se manda el payload directamente sin corromper el hilo
+                commitToFirebase(payload);
             }
         });
 
@@ -787,7 +809,7 @@
         }
 
         async function deleteProduct(id) {
-            if(confirm("¿Eliminar este producto permanentemente del sistema?")) {
+            if(confirm("¿Eliminar este producto permanentemente en Quetzales?")) {
                 await deleteDoc(doc(db, "products", id));
             }
         }
@@ -858,8 +880,11 @@
             DOM.mLowStock.innerText = lowStock;
         }
 
-        // CONTROL DE GRÁFICOS INTERACTIVOS
+        // CONTROL DE GRÁFICOS INTERACTIVOS (SOPORTA VARIACIÓN DE CONTRASTE)
         function renderCharts() {
+            const isDark = document.documentElement.getAttribute('data-bg') === 'space' || document.documentElement.getAttribute('data-bg') === 'oled';
+            const labelColor = isDark ? '#f3f4f6' : '#1e293b';
+            
             const brands = {};
             let optimal = 0, low = 0, empty = 0;
 
@@ -875,24 +900,36 @@
             if (charts.brands) charts.brands.destroy();
             charts.brands = new Chart(document.getElementById('chart-brands').getContext('2d'), {
                 type: 'bar',
-                data: { labels: Object.keys(brands), datasets: [{ data: Object.values(brands), backgroundColor: '#00f0ff' }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+                data: { labels: Object.keys(brands), datasets: [{ data: Object.values(brands), backgroundColor: '#00b4d8' }] },
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { ticks: { color: labelColor } },
+                        y: { ticks: { color: labelColor } }
+                    }
+                }
             });
 
             if (charts.status) charts.status.destroy();
             charts.status = new Chart(document.getElementById('chart-stock-status').getContext('2d'), {
                 type: 'doughnut',
                 data: { labels: ['Estable', 'Bajo Stock', 'Agotado'], datasets: [{ data: [optimal, low, empty], backgroundColor: ['#10b981', '#f59e0b', '#ef4444'] }] },
-                options: { responsive: true, maintainAspectRatio: false }
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false,
+                    plugins: { legend: { labels: { color: labelColor } } }
+                }
             });
         }
 
         // EXPORTADOR PDF
         window.exportToPDF = function() {
             const { jsPDF } = window.jspdf; const doc = new jsPDF();
-            doc.text("REPORTE MAESTRO DE INVENTARIO", 14, 15);
-            doc.autoTable({ startY: 20, head: [['SKU', 'Producto', 'Marca', 'Precio', 'Existencia']], body: memory.products.map(p => [p.code || '—', p.name, p.brand || '—', p.priceSell, p.stock]) });
-            doc.save('Inventario-Completo.pdf');
+            doc.text("REPORTE MAESTRO DE INVENTARIO (VALORES EN Q)", 14, 15);
+            doc.autoTable({ startY: 20, head: [['SKU', 'Producto', 'Marca', 'Precio Venta', 'Existencia']], body: memory.products.map(p => [p.code || '—', p.name, p.brand || '—', `Q${Number(p.priceSell).toFixed(2)}`, p.stock]) });
+            doc.save('Inventario-Souvreign.pdf');
         };
 
         // NAVEGACIÓN DINÁMICA DE PESTAÑAS (SIDEBAR)
@@ -900,15 +937,18 @@
             item.addEventListener('click', (e) => {
                 e.preventDefault();
                 
-                // Animación de cambio
                 DOM.views.forEach(v => v.style.display = 'none');
                 const targetView = document.getElementById(item.dataset.target);
                 targetView.style.display = 'block';
                 
-                // Actualizar título e item activo
                 DOM.pageTitle.innerText = item.textContent.trim();
                 DOM.navItems.forEach(i => i.classList.remove('active'));
                 item.classList.add('active');
+                
+                // Cierre automático en móviles al seleccionar vista
+                if (window.innerWidth <= 1024) {
+                    document.documentElement.setAttribute('data-sidebar', 'closed');
+                }
             });
         });
 
