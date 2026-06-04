@@ -5,35 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SOUVREIGN · Sistema de Inventario</title>
     
-    <!-- Google Fonts & FontAwesome -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Componentes de UI Externos -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
-    <!-- Motores de Procesamiento de Documentos (Excel / PDF) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
 
     <style>
         :root {
-            --transition-smooth: all 0.25s ease;
-            --radius-lg: 12px;
-            --radius-md: 8px;
-            --radius-sm: 4px;
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --radius-lg: 14px;
+            --radius-md: 10px;
+            --radius-sm: 6px;
             
             /* Colores de Acento Estables */
             --accent: #00f0ff;
-            --accent-glow: rgba(0, 240, 255, 0.1);
+            --accent-glow: rgba(0, 240, 255, 0.15);
             --text-primary: #f3f4f6;
             --text-secondary: #9ca3af;
-            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
 
         /* Configuración de Fondos Oscuros Conmutables */
@@ -41,21 +38,25 @@
             --bg-base: #0b0f17;
             --bg-surface: #111827;
             --border-color: #1f2937;
+            --bg-hover: #1f2937;
         }
         [data-bg="oled"] {
             --bg-base: #000000;
             --bg-surface: #0a0a0a;
-            --border-color: #171717;
+            --border-color: #1c1c1c;
+            --bg-hover: #171717;
         }
         [data-bg="navy"] {
             --bg-base: #050b14;
             --bg-surface: #0b132b;
             --border-color: #1c2541;
+            --bg-hover: #1c2541;
         }
         [data-bg="forest"] {
             --bg-base: #040806;
             --bg-surface: #0b140f;
             --border-color: #17251d;
+            --bg-hover: #17251d;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'DM Sans', sans-serif; }
@@ -79,33 +80,55 @@
         .auth-btn:hover { transform: translateY(-1px); }
 
         /* ARQUITECTURA GENERAL */
-        #app-layout { display: flex; min-height: 100vh; opacity: 0; transition: opacity 0.3s ease; }
+        #app-layout { display: flex; min-height: 100vh; opacity: 0; transition: opacity 0.4s ease; }
         #app-layout.authenticated { opacity: 1; }
 
+        /* REESTRUCTURACIÓN DINÁMICA DEL MENÚ LATERAL (SIDEBAR) */
         sidebar {
-            width: 260px; background-color: var(--bg-surface); border-right: 1px solid var(--border-color);
+            width: 270px; background-color: var(--bg-surface); border-right: 1px solid var(--border-color);
             display: flex; flex-direction: column; position: fixed; height: 100vh; z-index: 100; transition: var(--transition-smooth);
         }
-        .sidebar-header { padding: 24px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border-color); }
-        .sidebar-title { font-weight: 700; font-size: 1.2rem; }
+        .sidebar-header { padding: 28px 24px; display: flex; align-items: center; gap: 14px; border-bottom: 1px solid var(--border-color); }
+        .sidebar-title { font-weight: 700; font-size: 1.3rem; letter-spacing: 0.5px; }
         
-        .nav-menu { list-style: none; padding: 24px 12px; display: flex; flex-direction: column; gap: 4px; }
+        .nav-menu { list-style: none; padding: 24px 14px; display: flex; flex-direction: column; gap: 6px; }
+        
         .nav-item a {
-            display: flex; align-items: center; gap: 12px; padding: 12px 16px; color: var(--text-secondary);
-            text-decoration: none; border-radius: var(--radius-md); font-weight: 500; transition: var(--transition-smooth);
+            display: flex; align-items: center; gap: 14px; padding: 12px 16px; color: var(--text-secondary);
+            text-decoration: none; border-radius: var(--radius-md); font-weight: 500; font-size: 0.95rem;
+            position: relative; transition: var(--transition-smooth);
         }
-        .nav-item.active a, .nav-item a:hover { color: var(--text-primary); background-color: var(--bg-base); }
-        .nav-item.active a { color: var(--accent); font-weight: 600; }
+        .nav-item a i { font-size: 1.1rem; width: 20px; text-align: center; transition: var(--transition-smooth); }
+        
+        /* Efectos Dinámicos de Selección y Hover */
+        .nav-item a:hover {
+            color: var(--text-primary);
+            background-color: var(--bg-hover);
+            padding-left: 20px;
+        }
+        .nav-item a:hover i { color: var(--accent); transform: scale(1.1); }
+        
+        .nav-item.active a {
+            color: var(--bg-base);
+            background-color: var(--text-primary);
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+        }
+        .nav-item.active a i { color: var(--bg-base); }
+        .nav-item.active a:hover { padding-left: 16px; color: var(--bg-base); background-color: var(--text-primary); }
+        .nav-item.active a:hover i { color: var(--bg-base); transform: none; }
 
-        main { margin-left: 260px; flex-grow: 1; padding: 40px; transition: var(--transition-smooth); }
+        main { margin-left: 270px; flex-grow: 1; padding: 40px; transition: var(--transition-smooth); }
         .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
 
         /* CONTROLES DE INTERFAZ Y ESTILOS */
         .style-hub { display: flex; align-items: center; gap: 12px; }
         .bg-dropdown {
             background-color: var(--bg-surface); color: var(--text-primary); border: 1px solid var(--border-color);
-            padding: 8px 12px; border-radius: var(--radius-md); font-size: 0.85rem; cursor: pointer; outline: none;
+            padding: 8px 12px; border-radius: var(--radius-md); font-size: 0.85rem; cursor: pointer; outline: none; transition: var(--transition-smooth);
         }
+        .bg-dropdown:focus { border-color: var(--accent); }
+        
         .user-profile {
             display: flex; align-items: center; gap: 10px; background-color: var(--bg-surface);
             border: 1px solid var(--border-color); padding: 6px 14px; border-radius: 20px;
@@ -116,8 +139,9 @@
         .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 32px; }
         .metric-card {
             background-color: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-lg);
-            padding: 24px; box-shadow: var(--card-shadow);
+            padding: 24px; box-shadow: var(--card-shadow); transition: var(--transition-smooth);
         }
+        .metric-card:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.15); }
         .metric-header { display: flex; justify-content: space-between; align-items: center; color: var(--text-secondary); font-size: 0.85rem; font-weight: 600; }
         .metric-value { font-size: 2rem; font-weight: 700; margin-top: 8px; }
 
@@ -128,18 +152,19 @@
         .form-group { margin-bottom: 16px; }
         .form-label { display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 6px; color: var(--text-secondary); }
         .form-control {
-            width: 100%; padding: 10px 14px; background-color: var(--bg-base); border: 1px solid var(--border-color);
+            width: 100%; padding: 11px 14px; background-color: var(--bg-base); border: 1px solid var(--border-color);
             border-radius: var(--radius-md); color: var(--text-primary); font-size: 0.9rem; transition: var(--transition-smooth);
         }
-        .form-control:focus { outline: none; border-color: var(--accent); }
+        .form-control:focus { outline: none; border-color: var(--text-primary); }
 
         /* EXCEL ZONA DE CARGA */
         .excel-dropzone {
-            border: 2px dashed var(--border-color); border-radius: var(--radius-lg); padding: 32px; text-align: center;
+            border: 2px dashed var(--border-color); border-radius: var(--radius-lg); padding: 36px; text-align: center;
             background-color: var(--bg-base); cursor: pointer; transition: var(--transition-smooth); margin-bottom: 20px;
         }
-        .excel-dropzone:hover { border-color: var(--accent); }
-        .excel-dropzone i { font-size: 2rem; color: var(--text-secondary); margin-bottom: 12px; }
+        .excel-dropzone:hover { border-color: var(--accent); background-color: var(--bg-hover); }
+        .excel-dropzone i { font-size: 2.2rem; color: var(--text-secondary); margin-bottom: 12px; transition: var(--transition-smooth); }
+        .excel-dropzone:hover i { transform: translateY(-3px); color: #10b981; }
 
         /* TABLAS Y BOTONES */
         .btn {
@@ -147,16 +172,16 @@
             cursor: pointer; border: 1px solid transparent; transition: var(--transition-smooth); display: inline-flex; align-items: center; gap: 8px;
         }
         .btn-primary { background-color: var(--text-primary); color: var(--bg-base); }
-        .btn-primary:hover { opacity: 0.9; }
+        .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
         .btn-secondary { background-color: transparent; border: 1px solid var(--border-color); color: var(--text-primary); }
         .btn-secondary:hover { background-color: var(--border-color); }
         
         .table-responsive { width: 100%; overflow-x: auto; }
         .enterprise-table { width: 100%; border-collapse: collapse; text-align: left; }
-        .enterprise-table th { padding: 14px; border-bottom: 1px solid var(--border-color); color: var(--text-secondary); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; }
+        .enterprise-table th { padding: 14px; border-bottom: 1px solid var(--border-color); color: var(--text-secondary); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
         .enterprise-table td { padding: 14px; border-bottom: 1px solid var(--border-color); font-size: 0.9rem; }
         
-        .product-thumbnail { width: 40px; height: 40px; border-radius: var(--radius-md); object-fit: cover; border: 1px solid var(--border-color); }
+        .product-thumbnail { width: 42px; height: 42px; border-radius: var(--radius-sm); object-fit: cover; border: 1px solid var(--border-color); }
         .badge { padding: 4px 8px; border-radius: var(--radius-sm); font-size: 0.75rem; font-weight: 600; }
         .badge-success { background-color: rgba(16, 185, 129, 0.1); color: #10b981; }
         .badge-warning { background-color: rgba(245, 158, 11, 0.1); color: #f59e0b; }
@@ -166,11 +191,12 @@
 
         /* MODALES */
         .modal-overlay {
-            position: fixed; inset: 0; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+            position: fixed; inset: 0; background-color: rgba(0,0,0,0.7); backdrop-filter: blur(5px);
             z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: var(--transition-smooth);
         }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
-        .modal-window { background-color: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-lg); width: 100%; max-width: 500px; padding: 32px; box-shadow: var(--card-shadow); }
+        .modal-window { background-color: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-lg); width: 100%; max-width: 520px; padding: 32px; box-shadow: var(--card-shadow); transform: translateY(20px); transition: var(--transition-smooth); }
+        .modal-overlay.active .modal-window { transform: translateY(0); }
 
         @media (max-width: 1024px) {
             sidebar { transform: translateX(-100%); }
@@ -181,7 +207,6 @@
 </head>
 <body>
 
-    <!-- INTERFAZ DE LOGIN (GOOGLE AUTH) -->
     <div id="auth-gateway">
         <div class="auth-card">
             <div class="auth-brand">SOUVREIGN</div>
@@ -192,11 +217,10 @@
         </div>
     </div>
 
-    <!-- PANEL PRINCIPAL DE TRABAJO -->
     <div id="app-layout">
         <sidebar>
             <div class="sidebar-header">
-                <i class="fa-solid fa-boxes-stacked" style="color: var(--accent); font-size: 1.2rem;"></i>
+                <i class="fa-solid fa-boxes-stacked" style="color: var(--accent); font-size: 1.3rem;"></i>
                 <div class="sidebar-title">SOUVREIGN</div>
             </div>
             <ul class="nav-menu">
@@ -212,14 +236,12 @@
         </sidebar>
 
         <main>
-            <!-- Barra Superior -->
             <div class="top-bar">
                 <div>
                     <h1 id="page-title" style="font-weight: 600; font-size: 1.5rem;">Inicio</h1>
                     <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 2px;" id="live-clock">--:--</p>
                 </div>
                 
-                <!-- SELECTOR DE FONDOS CONFORTABLES -->
                 <div class="style-hub">
                     <label style="font-size: 0.8rem; color: var(--text-secondary);">Fondo:</label>
                     <select id="bg-selector" class="bg-dropdown">
@@ -236,7 +258,6 @@
                 </div>
             </div>
 
-            <!-- Vista 1: Inicio / Dashboard -->
             <div id="view-dashboard" class="app-view">
                 <div class="metrics-grid">
                     <div class="metric-card">
@@ -269,7 +290,6 @@
                 </div>
             </div>
 
-            <!-- Vista 2: Inventario -->
             <div id="view-products" class="app-view" style="display: none;">
                 <div class="glass-panel" style="padding: 16px; margin-bottom: 20px; display: flex; gap: 16px; align-items: center; justify-content: space-between; flex-wrap: wrap;">
                     <input type="text" id="search-prod" class="form-control" placeholder="Buscar por nombre o SKU..." style="max-width: 350px; margin-bottom: 0;">
@@ -301,7 +321,6 @@
                 </div>
             </div>
 
-            <!-- Vista 3: Carga de Excel -->
             <div id="view-excel-upload" class="app-view" style="display: none;">
                 <div class="glass-panel">
                     <div class="panel-title">Importación Masiva desde Excel</div>
@@ -328,7 +347,6 @@
                 </div>
             </div>
 
-            <!-- Vista 4: Proveedores -->
             <div id="view-suppliers" class="app-view" style="display: none;">
                 <div class="charts-row" style="grid-template-columns: 1fr 1.5fr;">
                     <div class="glass-panel">
@@ -362,7 +380,6 @@
                 </div>
             </div>
 
-            <!-- Vista 5: MÓDULO NUEVO - REORDEN DE COMPRAS -->
             <div id="view-reorder" class="app-view" style="display: none;">
                 <div class="glass-panel">
                     <div class="panel-title">Sugerencias de Compra Automática (Bajo Stock)</div>
@@ -389,7 +406,6 @@
         </main>
     </div>
 
-    <!-- MODAL: AGREGAR O EDITAR PRODUCTO (CORREGIDO) -->
     <div class="modal-overlay" id="modal-product">
         <div class="modal-window">
             <h3 class="panel-title" id="modal-product-title">Formulario de Producto</h3>
@@ -427,7 +443,6 @@
         </div>
     </div>
 
-    <!-- CONTROL CENTRAL DE BASE DE DATOS Y FLUJOS -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { 
@@ -594,7 +609,8 @@
                 Swal.fire('Éxito', `Se importaron ${currentExcelBuffer.length} productos.`, 'success');
                 DOM.excelPreviewArea.style.display = 'none';
                 currentExcelBuffer = null;
-                changeTab('view-products', 'Inventario');
+                // Simulación de click dinámico de navegación
+                document.querySelector('[data-target="view-products"]').click();
             } catch (err) {
                 Swal.fire('Error', 'Hubo un problema al subir a Firebase.', 'error');
             }
@@ -618,7 +634,7 @@
             });
         }
 
-        // CONTROL CORRECTO DE CREACIÓN / EDICIÓN (SOLUCIÓN AL ERROR)
+        // CONTROL DE REGISTRO / EDICIÓN CON COMPRESIÓN DE IMAGEN AUTOMÁTICA (SOLUCIÓN DEFINITIVA)
         DOM.formProduct.addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -644,11 +660,9 @@
 
                 try {
                     if (targetId) {
-                        // Modo Edición
                         await updateDoc(doc(db, "products", targetId), payload);
                         Swal.fire('Actualizado', 'Producto modificado con éxito.', 'success');
                     } else {
-                        // Modo Registro Nuevo
                         if (!base64String) payload.imageUrl = '';
                         payload.createdAt = serverTimestamp();
                         await addDoc(collection(db, "products"), payload);
@@ -657,14 +671,42 @@
                     closeProductModal();
                 } catch (error) {
                     console.error("Error al guardar producto: ", error);
-                    Swal.fire('Error', 'No se pudieron escribir los datos.', 'error');
+                    Swal.fire('Error', 'No se pudieron escribir los datos en Firestore.', 'error');
                 }
             };
 
+            // Compresión del lado del cliente antes del envío si hay una imagen cargada
             if (fileInput.files && fileInput.files[0]) {
+                const file = fileInput.files[0];
                 const reader = new FileReader();
-                reader.onload = (event) => saveProcess(event.target.result);
-                reader.readAsDataURL(fileInput.files[0]);
+                
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        
+                        const MAX_WIDTH = 500; // Resolución perfecta para miniaturas
+                        let width = img.width;
+                        let height = img.height;
+                        
+                        if (width > MAX_WIDTH) {
+                            height = Math.round((height * MAX_WIDTH) / width);
+                            width = MAX_WIDTH;
+                        }
+                        
+                        canvas.width = width;
+                        canvas.height = height;
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        // Compresión al 60% de calidad en formato JPEG
+                        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.6);
+                        saveProcess(compressedBase64);
+                    };
+                };
+                reader.readAsDataURL(file);
             } else {
                 await saveProcess();
             }
@@ -703,19 +745,18 @@
             document.querySelectorAll('.action-delete').forEach(b => b.addEventListener('click', (e) => deleteProduct(e.currentTarget.dataset.id)));
         }
 
-        // MÓDULO NUEVO: RENDER DE REORDEN DE COMPRA
         function renderReorderTable() {
             DOM.tbodyReorder.innerHTML = '';
             const lowStockItems = memory.products.filter(p => p.stock <= p.stockMin);
 
             if(lowStockItems.length === 0) {
-                DOM.tbodyReorder.innerHTML = `<tr><td colspan="6" style="text-align:center; color: var(--text-secondary);">🎉 Todos los productos cuentan con niveles estables de stock.</td></tr>`;
+                DOM.tbodyReorder.innerHTML = `<tr><td colspan="6" style="text-align:center; color: var(--text-secondary); padding: 24px;">🎉 Todos los productos cuentan con niveles estables de existencias.</td></tr>`;
                 return;
             }
 
             lowStockItems.forEach(p => {
                 const deficit = p.stockMin - p.stock;
-                const sugerido = deficit + 10; // Margen de seguridad estandarizado
+                const sugerido = deficit + 10; 
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td><code>${p.code || 'S/N'}</code></td>
@@ -746,12 +787,12 @@
         }
 
         async function deleteProduct(id) {
-            if(confirm("¿Eliminar este producto?")) {
+            if(confirm("¿Eliminar este producto permanentemente del sistema?")) {
                 await deleteDoc(doc(db, "products", id));
             }
         }
 
-        // PROVEEDORES FORM
+        // PROVEEDORES FORM LÓGICA
         DOM.formSupplier.addEventListener('submit', async (e) => {
             e.preventDefault();
             const id = document.getElementById('sup-edit-id').value;
@@ -766,6 +807,7 @@
             else await addDoc(collection(db, "suppliers"), data);
             DOM.formSupplier.reset();
             document.getElementById('sup-edit-id').value = '';
+            Swal.fire('Guardado', 'Proveedor registrado de forma segura.', 'success');
         });
 
         function renderSuppliersTable() {
@@ -797,10 +839,12 @@
         };
 
         window.deleteSupplier = async function(id) {
-            await deleteDoc(doc(db, "suppliers", id));
+            if(confirm("¿Eliminar este proveedor de la base de datos?")) {
+                await deleteDoc(doc(db, "suppliers", id));
+            }
         };
 
-        // CALCULO DE METRICAS CENTRALES
+        // CÁLCULO DE MÉTRICAS CENTRALES
         function calculateMetrics() {
             let totalValue = 0; let outStock = 0; let lowStock = 0;
             memory.products.forEach(p => {
@@ -814,7 +858,7 @@
             DOM.mLowStock.innerText = lowStock;
         }
 
-        // CONTROL DE GRÁFICOS
+        // CONTROL DE GRÁFICOS INTERACTIVOS
         function renderCharts() {
             const brands = {};
             let optimal = 0, low = 0, empty = 0;
@@ -851,23 +895,24 @@
             doc.save('Inventario-Completo.pdf');
         };
 
-        // MANEJO DE NAVEGACIÓN DE VISTAS
+        // NAVEGACIÓN DINÁMICA DE PESTAÑAS (SIDEBAR)
         DOM.navItems.forEach(item => {
             item.addEventListener('click', (e) => {
                 e.preventDefault();
-                changeTab(item.dataset.target, item.textContent.trim());
+                
+                // Animación de cambio
+                DOM.views.forEach(v => v.style.display = 'none');
+                const targetView = document.getElementById(item.dataset.target);
+                targetView.style.display = 'block';
+                
+                // Actualizar título e item activo
+                DOM.pageTitle.innerText = item.textContent.trim();
                 DOM.navItems.forEach(i => i.classList.remove('active'));
                 item.classList.add('active');
             });
         });
 
-        function changeTab(targetId, title) {
-            DOM.views.forEach(v => v.style.display = 'none');
-            document.getElementById(targetId).style.display = 'block';
-            DOM.pageTitle.innerText = title;
-        }
-
-        // VENTANAS MODALES MODULARES
+        // VENTANAS MODALES
         DOM.btnOpenProdModal.addEventListener('click', () => {
             DOM.formProduct.reset();
             document.getElementById('prod-edit-id').value = '';
@@ -878,7 +923,7 @@
         window.closeProductModal = function() { DOM.modalProduct.classList.remove('active'); };
         DOM.searchProd.addEventListener('input', renderProductsTable);
 
-        // RELOJ
+        // RELOJ EN VIVO EN ESPAÑOL (GT)
         setInterval(() => {
             DOM.liveClock.innerText = new Date().toLocaleString('es-GT', { weekday:'short', year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit'});
         }, 1000);
