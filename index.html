@@ -3,15 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SOUVREIGN · Sistema de Inventario</title>
+    <title>SOUVREIGN · Persistence State System</title>
     
+    <!-- FAVICON AESTHETIC INTEGRADO -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2300b4d8'><path d='M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z'/></svg>">
 
+    <!-- Google Fonts Premium (Syne para encabezados oscuros, DM Sans para datos e inputs) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <!-- UI Engines -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -21,33 +24,33 @@
 
     <style>
         :root {
-            --transition-cool: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            --radius-lg: 20px;
-            --radius-md: 12px;
+            --transition-smooth: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            --radius-lg: 24px;
+            --radius-md: 14px;
             --radius-sm: 8px;
-            --sidebar-width: 280px;
+            --sidebar-width: 290px;
             --cyan-glow: #00b4d8;
             --neon-purple: #7209b7;
         }
 
-        /* PALETAS SINCRONIZADAS AVANZADAS (AESTHETIC & HIGH-CONTRAST) */
+        /* PALETAS DE COLORES AVANZADAS - ESTILO HIGH-CONTRAST DARK FANTASY */
         [data-bg="space"] {
-            --bg-base: #060913;
-            --bg-surface: rgba(15, 23, 42, 0.6);
-            --border-color: rgba(255, 255, 255, 0.08);
-            --bg-hover: rgba(255, 255, 255, 0.05);
+            --bg-base: #05070f;
+            --bg-surface: rgba(11, 17, 32, 0.65);
+            --border-color: rgba(255, 255, 255, 0.07);
+            --bg-hover: rgba(255, 255, 255, 0.04);
             --text-primary: #f8fafc;
             --text-secondary: #94a3b8;
-            --card-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
-            --invert-btn: #f8fafc;
-            --invert-text: #060913;
-            --glass-blur: blur(16px);
+            --card-shadow: 0 30px 60px rgba(0, 0, 0, 0.8);
+            --invert-btn: #ffffff;
+            --invert-text: #05070f;
+            --glass-blur: blur(20px);
         }
         [data-bg="oled"] {
             --bg-base: #000000;
-            --bg-surface: rgba(10, 10, 10, 0.8);
-            --border-color: #1e1e1e;
-            --bg-hover: #161616;
+            --bg-surface: rgba(8, 8, 8, 0.95);
+            --border-color: #1a1a1a;
+            --bg-hover: #121212;
             --text-primary: #ffffff;
             --text-secondary: #a3a3a3;
             --card-shadow: 0 0 0 1px #222;
@@ -56,206 +59,208 @@
             --glass-blur: blur(0px);
         }
         [data-bg="white"] {
-            --bg-base: #f1f5f9;
+            --bg-base: #f8fafc;
             --bg-surface: rgba(255, 255, 255, 0.85);
             --border-color: rgba(0, 0, 0, 0.06);
             --bg-hover: rgba(0, 0, 0, 0.03);
             --text-primary: #0f172a;
             --text-secondary: #64748b;
-            --card-shadow: 0 20px 30px rgba(15, 23, 42, 0.04);
+            --card-shadow: 0 20px 40px rgba(15, 23, 42, 0.03);
             --invert-btn: #0f172a;
             --invert-text: #ffffff;
-            --glass-blur: blur(20px);
+            --glass-blur: blur(25px);
         }
         [data-bg="light-blue"] {
-            --bg-base: #e0f2fe;
-            --bg-surface: rgba(240, 249, 255, 0.8);
-            --border-color: rgba(14, 165, 233, 0.15);
-            --bg-hover: rgba(14, 165, 233, 0.08);
-            --text-primary: #0369a1;
-            --text-secondary: #38bdf8;
-            --card-shadow: 0 20px 30px rgba(14, 165, 233, 0.08);
-            --invert-btn: #0369a1;
+            --bg-base: #f0fdfa;
+            --bg-surface: rgba(240, 253, 250, 0.8);
+            --border-color: rgba(13, 148, 136, 0.15);
+            --bg-hover: rgba(13, 148, 136, 0.06);
+            --text-primary: #115e59;
+            --text-secondary: #2dd4bf;
+            --card-shadow: 0 25px 35px rgba(13, 148, 136, 0.06);
+            --invert-btn: #115e59;
             --invert-text: #ffffff;
-            --glass-blur: blur(12px);
+            --glass-blur: blur(15px);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'DM Sans', sans-serif; }
-        body { background-color: var(--bg-base); color: var(--text-primary); min-height: 100vh; transition: var(--transition-cool); overflow-x: hidden; }
+        body { background-color: var(--bg-base); color: var(--text-primary); min-height: 100vh; transition: var(--transition-smooth); overflow-x: hidden; }
 
-        /* GATEWAY LOGIN */
+        /* PORTAL DE AUTENTICACIÓN */
         #auth-gateway {
-            position: fixed; inset: 0; background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
+            position: fixed; inset: 0; background: radial-gradient(circle at center, #0b0f19 0%, #02040a 100%);
             z-index: 9999; display: flex; align-items: center; justify-content: center;
         }
         .auth-card {
-            background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(20px);
-            padding: 50px 40px; border-radius: var(--radius-lg); width: 100%; max-width: 420px; text-align: center; box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+            background: rgba(10, 15, 30, 0.75); border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(20px);
+            padding: 60px 45px; border-radius: var(--radius-lg); width: 100%; max-width: 440px; text-align: center; box-shadow: var(--card-shadow);
         }
-        .auth-brand { font-family: 'Syne', sans-serif; font-size: 2.2rem; font-weight: 800; letter-spacing: -1px; background: linear-gradient(to right, #fff, var(--cyan-glow)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        
+        .auth-brand { font-family: 'Syne', sans-serif; font-size: 2.6rem; font-weight: 800; letter-spacing: -1.5px; background: linear-gradient(to right, #fff, var(--cyan-glow)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .auth-btn {
-            width: 100%; padding: 14px; background: #ffffff; color: #020617; border: none; border-radius: var(--radius-md);
-            font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 12px; margin-top: 30px; transition: var(--transition-cool);
+            width: 100%; padding: 16px; background: #ffffff; color: #05070f; border: none; border-radius: var(--radius-md);
+            font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 12px; margin-top: 35px; transition: var(--transition-smooth);
         }
-        .auth-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(255,255,255,0.1); }
+        .auth-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(0, 180, 216, 0.3); }
 
-        /* ARQUITECTURA DE DISEÑO */
-        #app-layout { display: flex; min-height: 100vh; opacity: 0; transition: opacity 0.5s ease; }
+        /* ARQUITECTURA DE CONTENEDORES */
+        #app-layout { display: flex; min-height: 100vh; opacity: 0; transition: opacity 0.6s ease; }
         #app-layout.authenticated { opacity: 1; }
 
         sidebar {
             width: var(--sidebar-width); background: var(--bg-surface); backdrop-filter: var(--glass-blur); border-right: 1px solid var(--border-color);
-            display: flex; flex-direction: column; position: fixed; height: 100vh; z-index: 100; transition: var(--transition-cool); left: 0;
+            display: flex; flex-direction: column; position: fixed; height: 100vh; z-index: 100; transition: var(--transition-smooth); left: 0;
         }
         [data-sidebar="closed"] sidebar { left: calc(-1 * var(--sidebar-width)); }
         [data-sidebar="closed"] main { margin-left: 0; }
 
-        .sidebar-header { padding: 32px 28px; display: flex; align-items: center; gap: 14px; }
-        .sidebar-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.4rem; letter-spacing: -0.5px; }
+        .sidebar-header { padding: 40px 32px; display: flex; align-items: center; gap: 14px; }
+        .sidebar-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.5rem; letter-spacing: -0.5px; }
         
-        .nav-menu { list-style: none; padding: 10px 16px; display: flex; flex-direction: column; gap: 8px; }
+        .nav-menu { list-style: none; padding: 10px 20px; display: flex; flex-direction: column; gap: 10px; }
         .nav-item a {
-            display: flex; align-items: center; gap: 14px; padding: 14px 18px; color: var(--text-secondary);
-            text-decoration: none; border-radius: var(--radius-md); font-weight: 500; font-size: 0.95rem; transition: var(--transition-cool);
+            display: flex; align-items: center; gap: 16px; padding: 16px 20px; color: var(--text-secondary);
+            text-decoration: none; border-radius: var(--radius-md); font-weight: 500; font-size: 0.95rem; transition: var(--transition-smooth);
         }
-        .nav-item a i { font-size: 1.1rem; width: 24px; text-align: center; transition: var(--transition-cool); }
-        .nav-item a:hover { color: var(--text-primary); background: var(--bg-hover); transform: translateX(4px); }
-        .nav-item.active a { color: var(--invert-text); background: var(--invert-btn); font-weight: 600; box-shadow: var(--card-shadow); }
+        .nav-item a i { font-size: 1.1rem; width: 24px; text-align: center; }
+        .nav-item a:hover { color: var(--text-primary); background: var(--bg-hover); transform: translateX(5px); }
+        .nav-item.active a { color: var(--invert-text); background: var(--invert-btn); font-weight: 700; box-shadow: var(--card-shadow); }
         .nav-item.active a i { color: var(--cyan-glow); }
 
-        main { margin-left: var(--sidebar-width); flex-grow: 1; padding: 50px; transition: var(--transition-cool); }
-        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; gap: 16px; }
+        main { margin-left: var(--sidebar-width); flex-grow: 1; padding: 60px; transition: var(--transition-smooth); }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 50px; gap: 20px; }
 
         .menu-toggle-btn {
             background: var(--bg-surface); border: 1px solid var(--border-color); color: var(--text-primary);
-            width: 44px; height: 44px; display: grid; place-items: center; border-radius: var(--radius-md); cursor: pointer; transition: var(--transition-cool);
+            width: 48px; height: 48px; display: grid; place-items: center; border-radius: var(--radius-md); cursor: pointer; transition: var(--transition-smooth);
         }
-        .menu-toggle-btn:hover { background: var(--bg-hover); transform: scale(1.05); }
+        .menu-toggle-btn:hover { background: var(--bg-hover); transform: rotate(90deg); }
 
-        .style-hub { display: flex; align-items: center; gap: 16px; }
+        .style-hub { display: flex; align-items: center; gap: 20px; }
         .bg-dropdown {
             background: var(--bg-surface); color: var(--text-primary); border: 1px solid var(--border-color);
-            padding: 10px 16px; border-radius: var(--radius-md); font-size: 0.85rem; cursor: pointer; outline: none; font-weight: 500;
+            padding: 12px 18px; border-radius: var(--radius-md); font-size: 0.85rem; cursor: pointer; outline: none; font-weight: 600;
         }
 
         .user-profile {
             display: flex; align-items: center; gap: 12px; background: var(--bg-surface);
-            border: 1px solid var(--border-color); padding: 8px 18px; border-radius: 30px;
+            border: 1px solid var(--border-color); padding: 10px 22px; border-radius: 40px;
         }
-        .user-avatar { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; border: 1px solid rgba(255,255,255,0.2); }
+        .user-avatar { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; border: 1px solid rgba(255,255,255,0.15); }
 
-        /* RENDIMIENTO DEL DASHBOARD (DISEÑO INTEGRAMENTE NEÓN Y FINO) */
-        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; margin-bottom: 40px; }
+        /* DASHBOARD METRICS DESIGN */
+        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 28px; margin-bottom: 50px; }
         .metric-card {
             background: var(--bg-surface); backdrop-filter: var(--glass-blur); border: 1px solid var(--border-color);
-            border-radius: var(--radius-lg); padding: 28px; box-shadow: var(--card-shadow); position: relative; overflow: hidden;
-            transition: var(--transition-cool);
+            border-radius: var(--radius-lg); padding: 32px; box-shadow: var(--card-shadow); position: relative; overflow: hidden;
+            transition: var(--transition-smooth);
         }
-        .metric-card:hover { transform: translateY(-5px); border-color: rgba(0, 180, 216, 0.4); }
+        .metric-card:hover { transform: translateY(-6px); border-color: rgba(0, 180, 216, 0.4); }
         .metric-card::before {
             content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: linear-gradient(to bottom, var(--cyan-glow), var(--neon-purple));
         }
-        .metric-header { display: flex; justify-content: space-between; align-items: center; color: var(--text-secondary); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-        .metric-header i { font-size: 1.2rem; color: var(--cyan-glow); }
-        .metric-value { font-family: 'Syne', sans-serif; font-size: 2.2rem; font-weight: 700; margin-top: 12px; letter-spacing: -0.5px; }
+        .metric-header { display: flex; justify-content: space-between; align-items: center; color: var(--text-secondary); font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; }
+        .metric-header i { font-size: 1.3rem; color: var(--cyan-glow); }
+        .metric-value { font-family: 'Syne', sans-serif; font-size: 2.4rem; font-weight: 700; margin-top: 16px; letter-spacing: -0.5px; }
 
-        .glass-panel { background: var(--bg-surface); backdrop-filter: var(--glass-blur); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 32px; box-shadow: var(--card-shadow); margin-bottom: 32px; }
-        .panel-title { font-family: 'Syne', sans-serif; font-size: 1.25rem; font-weight: 700; margin-bottom: 24px; letter-spacing: -0.3px; }
+        .glass-panel { background: var(--bg-surface); backdrop-filter: var(--glass-blur); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 36px; box-shadow: var(--card-shadow); margin-bottom: 36px; }
+        .panel-title { font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 700; margin-bottom: 28px; letter-spacing: -0.3px; }
 
-        /* CONTROLES E INPUTS */
-        .form-group { margin-bottom: 20px; }
-        .form-label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 8px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; }
+        /* INPUTS & FORMULARIO AESTHETIC */
+        .form-group { margin-bottom: 24px; }
+        .form-label { display: block; font-size: 0.8rem; font-weight: 700; margin-bottom: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.8px; }
         .form-control {
-            width: 100%; padding: 12px 16px; background: rgba(0,0,0,0.15); border: 1px solid var(--border-color);
-            border-radius: var(--radius-md); color: var(--text-primary); font-size: 0.95rem; transition: var(--transition-cool); outline: none;
+            width: 100%; padding: 14px 18px; background: rgba(0, 0, 0, 0.25); border: 1px solid var(--border-color);
+            border-radius: var(--radius-md); color: var(--text-primary); font-size: 0.95rem; transition: var(--transition-smooth); outline: none;
         }
-        .form-control:focus { border-color: var(--cyan-glow); box-shadow: 0 0 12px rgba(0, 180, 216, 0.2); }
+        .form-control:focus { border-color: var(--cyan-glow); box-shadow: 0 0 16px rgba(0, 180, 216, 0.25); background: rgba(0, 0, 0, 0.4); }
 
-        /* TABLAS E HISTORIALES */
+        /* BUTTONS & DATA TABLES */
         .btn {
-            padding: 12px 24px; border-radius: var(--radius-md); font-weight: 600; font-size: 0.9rem;
-            cursor: pointer; border: 1px solid transparent; transition: var(--transition-cool); display: inline-flex; align-items: center; gap: 10px;
+            padding: 14px 28px; border-radius: var(--radius-md); font-weight: 700; font-size: 0.9rem;
+            cursor: pointer; border: 1px solid transparent; transition: var(--transition-smooth); display: inline-flex; align-items: center; gap: 12px;
         }
         .btn-primary { background: var(--invert-btn); color: var(--invert-text); box-shadow: var(--card-shadow); }
-        .btn-primary:hover { transform: translateY(-2px); opacity: 0.9; }
+        .btn-primary:hover { transform: translateY(-2px); opacity: 0.93; box-shadow: 0 10px 20px rgba(255,255,255,0.1); }
         .btn-secondary { background: transparent; border: 1px solid var(--border-color); color: var(--text-primary); }
         .btn-secondary:hover { background: var(--bg-hover); }
         
         .table-responsive { width: 100%; overflow-x: auto; }
         .enterprise-table { width: 100%; border-collapse: collapse; text-align: left; }
-        .enterprise-table th { padding: 18px 14px; border-bottom: 1px solid var(--border-color); color: var(--text-secondary); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-        .enterprise-table td { padding: 18px 14px; border-bottom: 1px solid var(--border-color); font-size: 0.95rem; }
+        .enterprise-table th { padding: 20px 16px; border-bottom: 2px solid var(--border-color); color: var(--text-secondary); font-size: 0.8srem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; }
+        .enterprise-table td { padding: 20px 16px; border-bottom: 1px solid var(--border-color); font-size: 0.95rem; }
         
-        .product-thumbnail { width: 46px; height: 46px; border-radius: var(--radius-sm); object-fit: cover; border: 1px solid var(--border-color); background: rgba(0,0,0,0.2); }
-        .badge { padding: 6px 12px; border-radius: var(--radius-sm); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
-        .badge-success { background: rgba(16, 185, 129, 0.12); color: #10b981; }
-        .badge-warning { background: rgba(245, 158, 11, 0.12); color: #f59e0b; }
-        .badge-danger { background: rgba(239, 68, 68, 0.12); color: #ef4444; }
+        .product-thumbnail { width: 50px; height: 50px; border-radius: var(--radius-sm); object-fit: cover; border: 1px solid var(--border-color); background: rgba(0,0,0,0.3); }
+        .badge { padding: 6px 14px; border-radius: var(--radius-sm); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .badge-success { background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); }
+        .badge-warning { background: rgba(245, 158, 11, 0.1); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.2); }
+        .badge-danger { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
 
-        .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-bottom: 32px; }
+        .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; margin-bottom: 36px; }
 
-        /* MODALES */
+        /* MODALES E HIPER-DISEÑO */
         .modal-overlay {
-            position: fixed; inset: 0; background: rgba(2, 6, 23, 0.75); backdrop-filter: blur(8px);
-            z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: var(--transition-cool);
+            position: fixed; inset: 0; background: rgba(2, 4, 9, 0.85); backdrop-filter: blur(12px);
+            z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: var(--transition-smooth);
         }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
-        .modal-window { background: var(--bg-surface); backdrop-filter: var(--glass-blur); border: 1px solid var(--border-color); border-radius: var(--radius-lg); width: 100%; max-width: 560px; padding: 40px; box-shadow: var(--card-shadow); transform: scale(0.95); transition: var(--transition-cool); color: var(--text-primary); }
+        .modal-window { background: var(--bg-surface); backdrop-filter: var(--glass-blur); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-lg); width: 100%; max-width: 580px; padding: 45px; box-shadow: var(--card-shadow); transform: scale(0.93); transition: var(--transition-smooth); color: var(--text-primary); }
         .modal-overlay.active .modal-window { transform: scale(1); }
 
         .excel-dropzone {
-            border: 2px dashed var(--border-color); border-radius: var(--radius-lg); padding: 50px; text-align: center;
-            background: rgba(0,0,0,0.1); cursor: pointer; transition: var(--transition-cool);
+            border: 2px dashed var(--border-color); border-radius: var(--radius-lg); padding: 60px 40px; text-align: center;
+            background: rgba(0,0,0,0.2); cursor: pointer; transition: var(--transition-smooth);
         }
         .excel-dropzone:hover { border-color: var(--cyan-glow); background: var(--bg-hover); }
 
         @media (max-width: 1024px) {
             sidebar { left: calc(-1 * var(--sidebar-width)); }
             [data-sidebar="open"] sidebar { left: 0; }
-            main { margin-left: 0; padding: 24px; }
+            main { margin-left: 0; padding: 30px; }
             .charts-row { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
+    <!-- PORTAL LOGIN -->
     <div id="auth-gateway">
         <div class="auth-card">
             <div class="auth-brand">SOUVREIGN</div>
-            <p style="color: var(--text-secondary); font-size: 0.95rem; margin-top: 6px;">Persistence State System</p>
+            <p style="color: var(--text-secondary); font-size: 0.95rem; margin-top: 8px; letter-spacing: 1px;">WORLD-STATE PERSISTENCE SYSTEM</p>
             <button class="auth-btn" id="btn-google-login">
-                <i class="fa-brands fa-google"></i> Continuar con Google
+                <i class="fa-brands fa-google"></i> Desbloquear con Google
             </button>
         </div>
     </div>
 
+    <!-- ESTRUCTURA CENTRAL -->
     <div id="app-layout">
         <sidebar>
             <div class="sidebar-header">
-                <i class="fa-solid fa-feather-pointed" style="color: var(--cyan-glow); font-size: 1.4rem;"></i>
+                <i class="fa-solid fa-feather-pointed" style="color: var(--cyan-glow); font-size: 1.5rem;"></i>
                 <div class="sidebar-title">SOUVREIGN</div>
             </div>
             <ul class="nav-menu">
-                <li class="nav-item active" data-target="view-dashboard"><a href="#"><i class="fa-solid fa-chart-pie"></i> Inicio</a></li>
-                <li class="nav-item" data-target="view-products"><a href="#"><i class="fa-solid fa-box-archive"></i> Inventario</a></li>
-                <li class="nav-item" data-target="view-excel-upload"><a href="#"><i class="fa-solid fa-file-invoice"></i> Subir Excel</a></li>
-                <li class="nav-item" data-target="view-suppliers"><a href="#"><i class="fa-solid fa-address-book"></i> Proveedores</a></li>
-                <li class="nav-item" data-target="view-reorder"><a href="#"><i class="fa-solid fa-layer-group"></i> Reorden / Compras</a></li>
+                <li class="nav-item active" data-target="view-dashboard"><a href="#"><i class="fa-solid fa-chart-pie"></i> Consola Central</a></li>
+                <li class="nav-item" data-target="view-products"><a href="#"><i class="fa-solid fa-box-archive"></i> Inventario Completo</a></li>
+                <li class="nav-item" data-target="view-excel-upload"><a href="#"><i class="fa-solid fa-file-invoice"></i> Carga Masiva (Excel)</a></li>
+                <li class="nav-item" data-target="view-suppliers"><a href="#"><i class="fa-solid fa-address-book"></i> Registro Proveedores</a></li>
+                <li class="nav-item" data-target="view-reorder"><a href="#"><i class="fa-solid fa-layer-group"></i> Algoritmo Reorden</a></li>
             </ul>
-            <div style="margin-top: auto; padding: 28px; border-top: 1px solid var(--border-color);">
-                <button class="btn btn-secondary" id="btn-logout" style="width: 100%; justify-content: center; color: #ef4444;"><i class="fa-solid fa-arrow-right-from-bracket"></i> Desconectarse</button>
+            <div style="margin-top: auto; padding: 32px; border-top: 1px solid var(--border-color);">
+                <button class="btn btn-secondary" id="btn-logout" style="width: 100%; justify-content: center; color: #ef4444; border-color: rgba(239,68,68,0.2);"><i class="fa-solid fa-arrow-right-from-bracket"></i> Cerrar Sesión</button>
             </div>
         </sidebar>
 
         <main>
+            <!-- HEAD CONTROL -->
             <div class="top-bar">
-                <div style="display: flex; align-items: center; gap: 20px;">
+                <div style="display: flex; align-items: center; gap: 24px;">
                     <button class="menu-toggle-btn" id="sidebar-toggle-trigger">
                         <i class="fa-solid fa-bars-staggered"></i>
                     </button>
                     <div>
-                        <h1 id="page-title" style="font-family:'Syne', sans-serif; font-weight: 800; font-size: 1.8rem; letter-spacing: -0.5px;">Inicio</h1>
+                        <h1 id="page-title" style="font-family:'Syne', sans-serif; font-weight: 800; font-size: 2rem; letter-spacing: -0.5px;">Consola Central</h1>
                         <p style="color: var(--text-secondary); font-size: 0.85rem; font-weight: 500;" id="live-clock">--:--</p>
                     </div>
                 </div>
@@ -279,44 +284,46 @@
                 </div>
             </div>
 
+            <!-- VISTA 1: DASHBOARD METRICS -->
             <div id="view-dashboard" class="app-view">
                 <div class="metrics-grid">
                     <div class="metric-card">
-                        <div class="metric-header">Ítems Registrados <i class="fa-solid fa-cube"></i></div>
+                        <div class="metric-header">Modelos Registrados <i class="fa-solid fa-cube"></i></div>
                         <div class="metric-value" id="m-total-prods">0</div>
                     </div>
                     <div class="metric-card">
-                        <div class="metric-header">Capital de Inventario <i class="fa-solid fa-coins"></i></div>
+                        <div class="metric-header">Valor de Activos (Q) <i class="fa-solid fa-coins"></i></div>
                         <div class="metric-value" id="m-total-value">Q0.00</div>
                     </div>
                     <div class="metric-card">
-                        <div class="metric-header">Quiebres de Stock <i class="fa-solid fa-skull" style="color:#ef4444;"></i></div>
+                        <div class="metric-header">Quiebre de Operaciones <i class="fa-solid fa-skull" style="color:#ef4444;"></i></div>
                         <div class="metric-value" id="m-out-stock" style="color:#ef4444;">0</div>
                     </div>
                     <div class="metric-card">
-                        <div class="metric-header">Líneas en Alerta <i class="fa-solid fa-bell-cone" style="color:#f59e0b;"></i></div>
+                        <div class="metric-header">Alertas de Reposición <i class="fa-solid fa-triangle-exclamation" style="color:#f59e0b;"></i></div>
                         <div class="metric-value" id="m-low-stock" style="color:#f59e0b;">0</div>
                     </div>
                 </div>
 
                 <div class="charts-row">
                     <div class="glass-panel">
-                        <div class="panel-title">Métricas por Fabricante / Marca</div>
+                        <div class="panel-title">Distribución por Fabricante</div>
                         <div style="position: relative; height: 280px;"><canvas id="chart-brands"></canvas></div>
                     </div>
                     <div class="glass-panel">
-                        <div class="panel-title">Estatus Operativo Total</div>
+                        <div class="panel-title">Estado Crítico General</div>
                         <div style="position: relative; height: 280px;"><canvas id="chart-stock-status"></canvas></div>
                     </div>
                 </div>
             </div>
 
+            <!-- VISTA 2: INVENTARIO COMPLETO -->
             <div id="view-products" class="app-view" style="display: none;">
-                <div class="glass-panel" style="padding: 20px; display: flex; gap: 20px; align-items: center; justify-content: space-between; flex-wrap: wrap;">
-                    <input type="text" id="search-prod" class="form-control" placeholder="Escribe SKU o nombre para filtrar..." style="max-width: 380px;">
-                    <div style="display: flex; gap: 14px;">
-                        <button class="btn btn-secondary" onclick="exportToPDF()"><i class="fa-solid fa-file-pdf"></i> Generar PDF</button>
-                        <button class="btn btn-primary" id="btn-open-prod-modal"><i class="fa-solid fa-plus"></i> Añadir Ítems</button>
+                <div class="glass-panel" style="padding: 24px; display: flex; gap: 20px; align-items: center; justify-content: space-between; flex-wrap: wrap;">
+                    <input type="text" id="search-prod" class="form-control" placeholder="Buscar por SKU o descripción..." style="max-width: 400px;">
+                    <div style="display: flex; gap: 16px;">
+                        <button class="btn btn-secondary" onclick="exportToPDF()"><i class="fa-solid fa-file-pdf"></i> Imprimir Catálogo</button>
+                        <button class="btn btn-primary" id="btn-open-prod-modal"><i class="fa-solid fa-plus"></i> Registrar Ítem</button>
                     </div>
                 </div>
 
@@ -325,9 +332,9 @@
                         <table class="enterprise-table">
                             <thead>
                                 <tr>
-                                    <th>Miniatura</th>
+                                    <th>Imagen</th>
                                     <th>Código SKU</th>
-                                    <th>Nombre del Ítem</th>
+                                    <th>Nombre Técnico</th>
                                     <th>Marca</th>
                                     <th>Costo</th>
                                     <th>Precio Venta</th>
@@ -342,44 +349,47 @@
                 </div>
             </div>
 
+            <!-- VISTA 3: EXCEL INTEGRACIÓN -->
             <div id="view-excel-upload" class="app-view" style="display: none;">
                 <div class="glass-panel">
-                    <div class="panel-title">Inyección Masiva de Catálogo</div>
+                    <div class="panel-title">Procesador del Canal Masivo</div>
                     <div class="excel-dropzone" id="excel-drop-area">
-                        <i class="fa-solid fa-folder-plus" style="font-size: 2.5rem; color: var(--cyan-glow); margin-bottom: 16px;"></i>
-                        <p style="font-weight: 500; font-size: 1rem;">Arrastra la hoja de cálculo aquí o haz clic para explorar</p>
+                        <i class="fa-solid fa-cloud-arrow-up" style="font-size: 2.8rem; color: var(--cyan-glow); margin-bottom: 20px;"></i>
+                        <p style="font-weight: 600; font-size: 1.05rem; margin-bottom: 4px;">Arrastra tu documento Excel aquí</p>
+                        <p style="color: var(--text-secondary); font-size: 0.85rem;">Formatos admitidos: .xlsx, .xls</p>
                         <input type="file" id="excel-file-input" accept=".xlsx, .xls" style="display: none;">
                     </div>
                     
-                    <div id="excel-preview-area" style="display: none; margin-top: 32px;">
-                        <div class="panel-title" style="font-size: 1.1rem;">Líneas listas para procesar (Valores fijados en Quetzales)</div>
-                        <div class="table-responsive" style="max-height: 300px; margin-bottom: 24px;">
+                    <div id="excel-preview-area" style="display: none; margin-top: 40px;">
+                        <div class="panel-title" style="font-size: 1.1rem; color: var(--cyan-glow);">Datos listos para migración (Moneda: Quetzales)</div>
+                        <div class="table-responsive" style="max-height: 350px; margin-bottom: 30px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
                             <table class="enterprise-table">
                                 <thead id="excel-preview-thead"></thead>
                                 <tbody id="excel-preview-tbody"></tbody>
                             </table>
                         </div>
-                        <button class="btn btn-primary" id="btn-execute-excel-upload" style="width: 100%; justify-content: center;"><i class="fa-solid fa-bolt"></i> Indexar todo a la Base de Datos</button>
+                        <button class="btn btn-primary" id="btn-execute-excel-upload" style="width: 100%; justify-content: center;"><i class="fa-solid fa-bolt"></i> Indexar Registros al Servidor</button>
                     </div>
                 </div>
             </div>
 
+            <!-- VISTA 4: ENLACES PROVEEDORES -->
             <div id="view-suppliers" class="app-view" style="display: none;">
-                <div class="charts-row" style="grid-template-columns: 1fr 1.6fr;">
+                <div class="charts-row" style="grid-template-columns: 1fr 1.5fr;">
                     <div class="glass-panel">
-                        <div class="panel-title">Nueva Entidad Comercial</div>
+                        <div class="panel-title">Asignar Nueva Entidad Comercial</div>
                         <form id="form-supplier">
                             <input type="hidden" id="sup-edit-id">
-                            <div class="form-group"><label class="form-label">Nombre Responsable</label><input type="text" id="sup-name" class="form-control" required></div>
-                            <div class="form-group"><label class="form-label">Organización / Empresa</label><input type="text" id="sup-company" class="form-control" required></div>
-                            <div class="form-group"><label class="form-label">Contacto Telefónico</label><input type="text" id="sup-phone" class="form-control" required></div>
-                            <div class="form-group"><label class="form-label">Email Corporativo</label><input type="email" id="sup-email" class="form-control" required></div>
-                            <div class="form-group"><label class="form-label">Sede / Dirección</label><input type="text" id="sup-address" class="form-control" required></div>
-                            <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; margin-top: 10px;">Guardar Proveedor</button>
+                            <div class="form-group"><label class="form-label">Nombre del Contacto</label><input type="text" id="sup-name" class="form-control" required></div>
+                            <div class="form-group"><label class="form-label">Compañía / Razón Social</label><input type="text" id="sup-company" class="form-control" required></div>
+                            <div class="form-group"><label class="form-label">Teléfono de Enlace</label><input type="text" id="sup-phone" class="form-control" required></div>
+                            <div class="form-group"><label class="form-label">Correo Electrónico</label><input type="email" id="sup-email" class="form-control" required></div>
+                            <div class="form-group"><label class="form-label">Dirección Fiscal / Sede</label><input type="text" id="sup-address" class="form-control" required></div>
+                            <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; margin-top: 12px;">Salvar Proveedor</button>
                         </form>
                     </div>
                     <div class="glass-panel">
-                        <div class="panel-title">Directorio de Enlaces</div>
+                        <div class="panel-title">Matriz de Fabricantes y Proveedores</div>
                         <div class="table-responsive">
                             <table class="enterprise-table">
                                 <thead>
@@ -397,20 +407,21 @@
                 </div>
             </div>
 
+            <!-- VISTA 5: REORDEN DE STOCK -->
             <div id="view-reorder" class="app-view" style="display: none;">
                 <div class="glass-panel">
-                    <div class="panel-title">Algoritmo de Reordenación Crítica</div>
-                    <p style="color: var(--text-secondary); margin-bottom: 24px; font-size: 0.9rem;">El sistema calcula en tiempo real qué ítems se encuentran en umbrales de riesgo operacional y estipula la cuota matemática de adquisición inmediata.</p>
+                    <div class="panel-title">Algoritmo Estadístico de Abastecimiento Crítico</div>
+                    <p style="color: var(--text-secondary); margin-bottom: 30px; font-size: 0.95rem; line-height: 1.6;">Cálculo dinámico automático enfocado en la mitigación de roturas de stock operacional.</p>
                     <div class="table-responsive">
                         <table class="enterprise-table">
                             <thead>
                                 <tr>
                                     <th>SKU</th>
-                                    <th>Descripción de Producto</th>
-                                    <th>Stock Disponible</th>
-                                    <th>Mínimo Seguro</th>
-                                    <th>Déficit Crítico</th>
-                                    <th>Sugerencia de Abastecimiento</th>
+                                    <th>Descripción Corta</th>
+                                    <th>Stock Actual</th>
+                                    <th>Mínimo Permitido</th>
+                                    <th>Déficit Operativo</th>
+                                    <th>Recomendación de Compra</th>
                                 </tr>
                             </thead>
                             <tbody id="tbody-reorder"></tbody>
@@ -421,36 +432,37 @@
         </main>
     </div>
 
+    <!-- FORMULARIO DINÁMICO DE PRODUCTOS (CORREGIDO CONTRA NaN Y UNDEFINED) -->
     <div class="modal-overlay" id="modal-product">
         <div class="modal-window">
             <h3 class="panel-title" id="modal-product-title">Ficha Técnica del Producto</h3>
             <form id="form-product">
                 <input type="hidden" id="prod-edit-id">
                 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                     <div class="form-group"><label class="form-label">Identificador SKU</label><input type="text" id="prod-code" class="form-control"></div>
                     <div class="form-group"><label class="form-label">Nombre Comercial</label><input type="text" id="prod-name" class="form-control" required></div>
                 </div>
                 
-                <div class="form-group"><label class="form-label">Descripción</label><textarea id="prod-desc" class="form-control" rows="2"></textarea></div>
+                <div class="form-group"><label class="form-label">Descripción Operativa</label><textarea id="prod-desc" class="form-control" rows="2"></textarea></div>
                 <div class="form-group"><label class="form-label">Fabricante / Marca</label><input type="text" id="prod-brand" class="form-control"></div>
                 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                    <div class="form-group"><label class="form-label">Costo Adquisición (Q)</label><input type="number" step="0.01" id="prod-price-buy" class="form-control" required></div>
-                    <div class="form-group"><label class="form-label">Precio al Público (Q)</label><input type="number" step="0.01" id="prod-price-sell" class="form-control" required></div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="form-group"><label class="form-label">Costo Adquisición (Q)</label><input type="number" step="0.01" id="prod-price-buy" class="form-control" required value="0"></div>
+                    <div class="form-group"><label class="form-label">Precio al Público (Q)</label><input type="number" step="0.01" id="prod-price-sell" class="form-control" required value="0"></div>
                 </div>
                 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                    <div class="form-group"><label class="form-label">Stock Actual</label><input type="number" id="prod-stock" class="form-control" required value="0"></div>
-                    <div class="form-group"><label class="form-label">Umbral de Alerta (Min)</label><input type="number" id="prod-stock-min" class="form-control" required value="5"></div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="form-group"><label class="form-label">Stock Inicial</label><input type="number" id="prod-stock" class="form-control" required value="0"></div>
+                    <div class="form-group"><label class="form-label">Umbral Alerta (Mín)</label><input type="number" id="prod-stock-min" class="form-control" required value="5"></div>
                 </div>
                 
                 <div class="form-group">
                     <label class="form-label">Fotografía del Ítem</label>
-                    <input type="file" id="prod-img-file" class="form-control" accept="image/*" style="padding: 8px 12px;">
+                    <input type="file" id="prod-img-file" class="form-control" accept="image/*" style="padding: 10px 14px;">
                 </div>
                 
-                <div style="display: flex; justify-content: flex-end; gap: 14px; margin-top: 24px;">
+                <div style="display: flex; justify-content: flex-end; gap: 16px; margin-top: 30px;">
                     <button type="button" class="btn btn-secondary" onclick="closeProductModal()">Descartar</button>
                     <button type="submit" class="btn btn-primary">Comprometer Datos</button>
                 </div>
@@ -458,6 +470,7 @@
         </div>
     </div>
 
+    <!-- SCRIPT DE ARRANQUE E INTEGRACIÓN -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { 
@@ -520,15 +533,15 @@
             sidebarToggleTrigger: document.getElementById('sidebar-toggle-trigger')
         };
 
-        // SIDEBAR MANEJO DINÁMICO
+        // INTERRUPTOR LATERAL
         DOM.sidebarToggleTrigger.addEventListener('click', () => {
             const currentStatus = document.documentElement.getAttribute('data-sidebar');
             document.documentElement.setAttribute('data-sidebar', currentStatus === 'open' ? 'closed' : 'open');
         });
 
-        // GOOGLE AUTH PIPELINE
+        // CONTROL ACCESOS
         DOM.btnGoogleLogin.addEventListener('click', async () => {
-            try { await signInWithPopup(auth, googleProvider); } catch (e) { Swal.fire('Error', 'Acceso denegado con Google.', 'error'); }
+            try { await signInWithPopup(auth, googleProvider); } catch (e) { Swal.fire('Acceso Inválido', 'Verifica credenciales con Google.', 'error'); }
         });
         DOM.btnLogout.addEventListener('click', () => signOut(auth));
 
@@ -550,7 +563,7 @@
             setTimeout(() => { renderCharts(); }, 250);
         });
 
-        // SECCIÓN INYECTOR DE EXCEL MASIVO
+        // PARSER HOJA DE CÁLCULO
         DOM.excelDropArea.addEventListener('click', () => DOM.excelFileInput.click());
         DOM.excelDropArea.addEventListener('dragover', (e) => e.preventDefault());
         DOM.excelDropArea.addEventListener('drop', (e) => { e.preventDefault(); if(e.dataTransfer.files.length) parseExcel(e.dataTransfer.files[0]); });
@@ -591,23 +604,22 @@
 
         DOM.btnExecuteExcelUpload.addEventListener('click', async () => {
             if(!currentExcelBuffer) return;
-            Swal.fire({ title: 'Subiendo datos masivos...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+            Swal.fire({ title: 'Sincronizando Archivo...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
             try {
                 for(const item of currentExcelBuffer) {
-                    await addDoc(collection(db, "products"), { ...item, description: 'Indexación masiva Excel', imageUrl: '', createdAt: serverTimestamp(), updatedAt: serverTimestamp() });
+                    await addDoc(collection(db, "products"), { ...item, description: 'Carga masiva Excel', imageUrl: '', createdAt: serverTimestamp(), updatedAt: serverTimestamp() });
                 }
-                Swal.fire('Éxito', 'Catálogo cargado en Quetzales de forma impecable.', 'success');
+                Swal.fire('Indexación Completa', 'Catálogo cargado en Quetzales perfectamente.', 'success');
                 DOM.excelPreviewArea.style.display = 'none';
                 document.querySelector('[data-target="view-products"]').click();
-            } catch (err) { Swal.fire('Error', 'Problema al sincronizar con Firebase.', 'error'); }
+            } catch (err) { Swal.fire('Fallo Servidor', 'Problema al inyectar registros en Firebase.', 'error'); }
         });
 
-        // FIRESTORE SYNC PIPELINES
+        // FIRESTORE SYNC REALTIME PIPELINES
         function startRealtimePipelines() {
             onSnapshot(query(collection(db, "products"), orderBy("name")), (snapshot) => {
                 memory.products = [];
                 snapshot.forEach(docSnap => {
-                    // LA SOLUCIÓN DEFINITIVA AL ERROR: Validación de existencia + Fallbacks por defecto
                     if (docSnap.exists()) {
                         const rawData = docSnap.data();
                         memory.products.push({
@@ -628,8 +640,6 @@
                 renderReorderTable();
                 calculateMetrics();
                 renderCharts();
-            }, (error) => {
-                console.error("Fallo crítico en el pipeline de productos:", error);
             });
 
             onSnapshot(query(collection(db, "suppliers"), orderBy("company")), (snapshot) => {
@@ -651,36 +661,48 @@
             });
         }
 
-        // GUARDADO DE PRODUCTOS INTEGRAL Y EVITA RE-PROCESAMIENTOS CORRUPTOS
+        // SOLUCIÓN DEFINITIVA DE CONTROLADOR DE PRODUCTOS (CERO NAN, CERO UNDEFINED)
         DOM.formProduct.addEventListener('submit', async (e) => {
             e.preventDefault();
             const targetId = document.getElementById('prod-edit-id').value;
             const fileInput = document.getElementById('prod-img-file');
+
+            // Filtrado estricto contra NaN usando fallbacks lógicos
+            const parsedPriceBuy = parseFloat(document.getElementById('prod-price-buy').value);
+            const parsedPriceSell = parseFloat(document.getElementById('prod-price-sell').value);
+            const parsedStock = parseInt(document.getElementById('prod-stock').value, 10);
+            const parsedStockMin = parseInt(document.getElementById('prod-stock-min').value, 10);
 
             const payload = {
                 code: document.getElementById('prod-code').value.trim(),
                 name: document.getElementById('prod-name').value.trim(),
                 description: document.getElementById('prod-desc').value.trim(),
                 brand: document.getElementById('prod-brand').value.trim(),
-                priceBuy: Number(document.getElementById('prod-price-buy').value || 0),
-                priceSell: Number(document.getElementById('prod-price-sell').value || 0),
-                stock: Number(document.getElementById('prod-stock').value || 0),
-                stockMin: Number(document.getElementById('prod-stock-min').value || 0),
+                priceBuy: isNaN(parsedPriceBuy) ? 0 : parsedPriceBuy,
+                priceSell: isNaN(parsedPriceSell) ? 0 : parsedPriceSell,
+                stock: isNaN(parsedStock) ? 0 : parsedStock,
+                stockMin: isNaN(parsedStockMin) ? 5 : parsedStockMin,
+                imageUrl: "", // Inicializado para evitar 'undefined' en Firestore
                 updatedAt: serverTimestamp()
             };
 
             const writeExecution = async (finalPayload) => {
                 try {
                     if (targetId) {
+                        const existingProd = memory.products.find(p => p.id === targetId);
+                        if (existingProd && !finalPayload.imageUrl) {
+                            finalPayload.imageUrl = existingProd.imageUrl || "";
+                        }
                         await updateDoc(doc(db, "products", targetId), finalPayload);
                     } else {
                         finalPayload.createdAt = serverTimestamp();
                         await addDoc(collection(db, "products"), finalPayload);
                     }
                     closeProductModal();
-                    Swal.fire('Transacción Realizada', 'Base de datos actualizada con éxito.', 'success');
+                    Swal.fire('Transacción Realizada', 'Base de datos sincronizada con éxito.', 'success');
                 } catch (error) {
-                    Swal.fire('Error', 'Fallo al escribir registro.', 'error');
+                    console.error("Fallo detallado de Firestore:", error);
+                    Swal.fire('Error', `Fallo al escribir registro: ${error.message}`, 'error');
                 }
             };
 
@@ -756,26 +778,26 @@
         }
 
         async function deleteProduct(id) {
-            if(confirm("¿Remover ítem del inventario?")) await deleteDoc(doc(db, "products", id));
+            if(confirm("¿Remover este registro definitivamente?")) await deleteDoc(doc(db, "products", id));
         }
 
         function renderReorderTable() {
             DOM.tbodyReorder.innerHTML = '';
             const riskItems = memory.products.filter(p => p.stock <= p.stockMin);
             if(!riskItems.length) {
-                DOM.tbodyReorder.innerHTML = `<tr><td colspan="6" style="text-align:center; color: var(--text-secondary); padding:30px;">🎉 Parámetros óptimos en todas las existencias.</td></tr>`;
+                DOM.tbodyReorder.innerHTML = `<tr><td colspan="6" style="text-align:center; color: var(--text-secondary); padding:40px;">🎉 Niveles operacionales óptimos en todos los nodos.</td></tr>`;
                 return;
             }
             riskItems.forEach(p => {
                 const deficit = p.stockMin - p.stock;
-                const sug = deficit + 15;
+                const sug = (deficit <= 0 ? 10 : deficit) + 15;
                 const tr = document.createElement('tr');
-                tr.innerHTML = `<td><code>${p.code || '—'}</code></td><td><strong>${p.name}</strong></td><td style="color:#ef4444;"><strong>${p.stock}</strong></td><td>${p.stockMin}</td><td>${deficit <= 0 ? 0 : deficit} u.</td><td><span class="badge badge-warning">Adquirir +${sug} u.</span></td>`;
+                tr.innerHTML = `<td><code>${p.code || '—'}</code></td><td><strong>${p.name}</strong></td><td style="color:#ef4444;"><strong>${p.stock}</strong></td><td>${p.stockMin}</td><td>${deficit <= 0 ? 0 : deficit} u.</td><td><span class="badge badge-warning">Solicitar +${sug} u.</span></td>`;
                 DOM.tbodyReorder.appendChild(tr);
             });
         }
 
-        // PROVEEDORES FORM PIPELINE
+        // CONTROL PROVEEDORES
         DOM.formSupplier.addEventListener('submit', async (e) => {
             e.preventDefault();
             const id = document.getElementById('sup-edit-id').value;
@@ -818,9 +840,9 @@
             document.getElementById('sup-email').value = s.email;
             document.getElementById('sup-address').value = s.address;
         };
-        window.deleteSupplier = async function(id) { if(confirm("¿Eliminar proveedor?")) await deleteDoc(doc(db, "suppliers", id)); };
+        window.deleteSupplier = async function(id) { if(confirm("¿Eliminar entidad comercial?")) await deleteDoc(doc(db, "suppliers", id)); };
 
-        // PANEL DE MÉTRICAS Y GRÁFICAS REVOLUCIONADAS (AESTHETIC)
+        // MÓDULOS DE PROCESAMIENTO ESTADÍSTICO & GRÁFICAS (HIGH-END AESTHETIC)
         function calculateMetrics() {
             let val = 0, empty = 0, low = 0;
             memory.products.forEach(p => {
@@ -837,7 +859,7 @@
         function renderCharts() {
             const isDark = document.documentElement.getAttribute('data-bg') === 'space' || document.documentElement.getAttribute('data-bg') === 'oled';
             const fColor = isDark ? '#f8fafc' : '#0f172a';
-            const gridColor = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
+            const gridColor = isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)';
             
             const brands = {}; let optimal = 0, low = 0, empty = 0;
             memory.products.forEach(p => {
@@ -850,7 +872,7 @@
             if (charts.brands) charts.brands.destroy();
             charts.brands = new Chart(document.getElementById('chart-brands').getContext('2d'), {
                 type: 'bar',
-                data: { labels: Object.keys(brands), datasets: [{ data: Object.values(brands), backgroundColor: '#00b4d8', borderRadius: 6 }] },
+                data: { labels: Object.keys(brands), datasets: [{ data: Object.values(brands), backgroundColor: '#00b4d8', borderRadius: 8 }] },
                 options: { 
                     responsive: true, maintainAspectRatio: false, 
                     plugins: { legend: { display: false } },
@@ -871,12 +893,12 @@
 
         window.exportToPDF = function() {
             const { jsPDF } = window.jspdf; const doc = new jsPDF();
-            doc.setFont("Helvetica", "bold"); doc.text("SOUVREIGN INVENTORY REPORT", 14, 16);
+            doc.setFont("Helvetica", "bold"); doc.text("SOUVREIGN CORE INVENTORY LOG", 14, 16);
             doc.autoTable({ startY: 24, head: [['SKU', 'Ítem', 'Marca', 'Precio Público', 'Stock']], body: memory.products.map(p => [p.code, p.name, p.brand, `Q${p.priceSell.toFixed(2)}`, p.stock]) });
-            doc.save('Souvreign-Catalogo.pdf');
+            doc.save('Souvreign-Inventory.pdf');
         };
 
-        // ENRUTADOR DINÁMICO DE PESTAÑAS
+        // ENRUTADOR INTEGRAL DE VISTAS TABS
         DOM.navItems.forEach(item => {
             item.addEventListener('click', (e) => {
                 e.preventDefault();
