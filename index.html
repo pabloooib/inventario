@@ -1,0 +1,1546 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOUVREIGN // Enterprise Core Inventory System</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Cinzel:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <style>
+        :root {
+            /* Palette Design: Dark Fantasy Gothic-Tech Architecture */
+            --bg-base-dark: #0a0b0d;
+            --bg-surface-dark: rgba(18, 20, 24, 0.8);
+            --border-color-dark: rgba(255, 255, 255, 0.08);
+            --text-primary-dark: #f1f2f4;
+            --text-secondary-dark: #98a2b3;
+            --accent-cyan: #00f0ff;
+            --accent-blue: #0066ff;
+            --accent-glow: rgba(0, 240, 255, 0.15);
+            
+            /* Light Mode Hybrid Corporate (Stripe/Linear Variant) */
+            --bg-base-light: #f8f9fa;
+            --bg-surface-light: rgba(255, 255, 255, 0.85);
+            --border-color-light: rgba(0, 0, 0, 0.08);
+            --text-primary-light: #101828;
+            --text-secondary-light: #667085;
+            
+            /* Structural Variables mapped via theme triggers */
+            --transition-speed: 0.3s;
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 18px;
+            --sidebar-width: 280px;
+        }
+
+        [data-theme="dark"] {
+            --bg-base: var(--bg-base-dark);
+            --bg-surface: var(--bg-surface-dark);
+            --border-color: var(--border-color-dark);
+            --text-primary: var(--text-primary-dark);
+            --text-secondary: var(--text-secondary-dark);
+            --card-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+            --glass-bg: rgba(18, 20, 24, 0.7);
+            --glass-blur: blur(16px);
+        }
+
+        [data-theme="light"] {
+            --bg-base: var(--bg-base-light);
+            --bg-surface: var(--bg-surface-light);
+            --border-color: var(--border-color-light);
+            --text-primary: var(--text-primary-light);
+            --text-secondary: var(--text-secondary-light);
+            --card-shadow: 0 8px 32px 0 rgba(16, 24, 40, 0.06);
+            --glass-bg: rgba(255, 255, 255, 0.75);
+            --glass-blur: blur(16px);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+            min-height: 100vh;
+        }
+
+        /* Utility Scrollbars */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: var(--radius-sm); }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent-cyan); }
+
+        /* Auth Screen Styling */
+        #auth-container {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: linear-gradient(135deg, #050507 0%, #0c1017 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .auth-card {
+            background: rgba(15, 18, 25, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-top: 2px solid var(--accent-cyan);
+            width: 100%;
+            max-width: 440px;
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            box-shadow: 0 24px 64px rgba(0, 0, 0, 0.7);
+            transform: translateY(0);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .auth-brand {
+            font-family: 'Cinzel', serif;
+            font-size: 2rem;
+            letter-spacing: 4px;
+            text-align: center;
+            margin-bottom: 8px;
+            background: linear-gradient(90deg, #fff 0%, var(--accent-cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .auth-subtitle {
+            text-align: center;
+            color: var(--text-secondary-dark);
+            font-size: 0.85rem;
+            margin-bottom: 32px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Layout Architecture */
+        #app-layout {
+            display: flex;
+            min-height: 100vh;
+            visibility: hidden; /* Controlled via state confirmation */
+        }
+
+        /* Sidebar Glassmorphism */
+        sidebar {
+            width: var(--sidebar-width);
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+            transition: transform var(--transition-speed), background-color var(--transition-speed);
+        }
+
+        .sidebar-header {
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sidebar-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.4rem;
+            letter-spacing: 2px;
+            font-weight: 700;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex-grow: 1;
+        }
+
+        .nav-item a {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 12px 16px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: var(--radius-md);
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item.active a, .nav-item a:hover {
+            color: var(--text-primary);
+            background: rgba(0, 240, 255, 0.06);
+            border-left: 3px solid var(--accent-cyan);
+            padding-left: 13px;
+        }
+
+        .sidebar-footer {
+            padding: 16px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* Main Workspace Content */
+        main {
+            margin-left: var(--sidebar-width);
+            flex-grow: 1;
+            padding: 40px;
+            min-width: 0;
+            transition: margin-left var(--transition-speed);
+        }
+
+        /* Header Control Bar */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--glass-bg);
+            border: 1px solid var(--border-color);
+            padding: 8px 16px;
+            border-radius: 50px;
+        }
+
+        /* Dashboard Analytical Cards */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .metric-card {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--card-shadow);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .metric-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent-cyan);
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.5s ease;
+        }
+
+        .metric-card:hover::before { transform: translateX(100%); }
+
+        .metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        /* UI Architectural Blocks (Forms, Tables, Controls) */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 32px;
+        }
+
+        .panel-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Dynamic Form Inputs */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(0,0,0,0.15);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+        }
+
+        [data-theme="light"] .form-control {
+            background: rgba(255,255,255,0.8);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        /* Buttons Elite Suite */
+        .btn {
+            padding: 12px 24px;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-blue) 0%, #0044cc 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(0, 102, 255, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(0, 102, 255, 0.4);
+        }
+
+        .btn-accent {
+            background: transparent;
+            border: 1px solid var(--accent-cyan);
+            color: var(--accent-cyan);
+        }
+
+        .btn-accent:hover {
+            background: var(--accent-cyan);
+            color: var(--bg-base-dark);
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover { background: rgba(255,255,255,0.05); }
+
+        /* Premium Enterprise Tables */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+        }
+
+        .enterprise-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+
+        .enterprise-table th {
+            background: rgba(0,0,0,0.2);
+            padding: 16px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-color);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+        }
+
+        [data-theme="light"] .enterprise-table th {
+            background: rgba(0,0,0,0.02);
+        }
+
+        .enterprise-table td {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        .enterprise-table tr:last-child td { border-bottom: none; }
+        .enterprise-table tr:hover td { background: rgba(0, 240, 255, 0.02); }
+
+        /* Modals Glass Elite */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-window {
+            background: var(--glass-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 650px;
+            padding: 32px;
+            box-shadow: 0 24px 48px rgba(0,0,0,0.4);
+            transform: scale(0.95);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-overlay.active .modal-window { transform: scale(1); }
+
+        /* Badge Framework */
+        .badge {
+            padding: 4px 10px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .badge-success { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+        .badge-warning { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+        .badge-danger { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+
+        /* Charts Wrapper Layout */
+        .charts-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        @media(max-width: 992px) {
+            .charts-row { grid-template-columns: 1fr; }
+            sidebar { transform: translateX(-100%); }
+            sidebar.open { transform: translateX(0); }
+            main { margin-left: 0; padding: 20px; }
+            .top-bar { margin-top: 40px; }
+        }
+
+        /* Image Display Frame */
+        .product-thumbnail {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-sm);
+            object-fit: cover;
+            border: 1px solid var(--border-color);
+            background: rgba(0,0,0,0.2);
+        }
+
+        /* Skeleton Loaders */
+        .skeleton {
+            background: linear-gradient(90deg, var(--border-color) 25%, rgba(255,255,255,0.15) 50%, var(--border-color) 75%);
+            background-size: 200% 100%;
+            animation: loadingSkeleton 1.5s infinite;
+            border-radius: var(--radius-sm);
+        }
+        @keyframes loadingSkeleton {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="auth-container">
+        <div class="auth-card" id="auth-card-box">
+            <div class="auth-brand">SOUVREIGN</div>
+            <div class="auth-subtitle">Enterprise Persistence Core</div>
+            
+            <form id="auth-form">
+                <div class="form-group">
+                    <label class="form-label" for="auth-email">Identidad Operativa (Email)</label>
+                    <input type="email" id="auth-email" class="form-control" placeholder="nombre@empresa.com" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="auth-password">Clave de Acceso</label>
+                    <input type="password" id="auth-password" class="form-control" placeholder="••••••••" required>
+                </div>
+                
+                <button type="submit" id="btn-auth-submit" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 12px;">
+                    <i class="fa-solid fa-shield-halved"></i> Autenticar Sistema
+                </button>
+            </form>
+            
+            <div style="margin-top: 24px; text-align: center; font-size: 0.85rem;">
+                <span id="auth-toggle-msg" style="color: var(--text-secondary-dark)">¿Nuevo operador?</span> 
+                <a href="#" id="auth-toggle-link" style="color: var(--accent-cyan); text-decoration: none; font-weight: 600; margin-left: 4px;">Registrar Credencial</a>
+            </div>
+            <div style="margin-top: 12px; text-align: center; font-size: 0.85rem;">
+                <a href="#" id="auth-forgot-link" style="color: var(--text-secondary-dark); text-decoration: none;">Recuperar Clave Remota</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="app-layout">
+        <sidebar id="app-sidebar">
+            <div class="sidebar-header">
+                <i class="fa-solid fa-cube" style="color: var(--accent-cyan); font-size: 1.5rem;"></i>
+                <div class="sidebar-title" style="color: var(--text-primary)">SOUVREIGN</div>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item active" data-target="view-dashboard">
+                    <a href="#"><i class="fa-solid fa-chart-pie"></i> Consola Base</a>
+                </li>
+                <li class="nav-item" data-target="view-products">
+                    <a href="#"><i class="fa-solid fa-boxes-stacked"></i> Módulo Inventario</a>
+                </li>
+                <li class="nav-item" data-target="view-categories">
+                    <a href="#"><i class="fa-solid fa-tags"></i> Taxonomías (Cat)</a>
+                </li>
+                <li class="nav-item" data-target="view-suppliers">
+                    <a href="#"><i class="fa-solid fa-truck-ramp-box"></i> Proveedores Directos</a>
+                </li>
+                <li class="nav-item" data-target="view-ledger">
+                    <a href="#"><i class="fa-solid fa-clock-rotate-left"></i> Historial Libro Diario</a>
+                </li>
+            </ul>
+            <div class="sidebar-footer">
+                <button class="btn btn-secondary" id="btn-logout" style="width: 100%; justify-content: center; border-color: rgba(239,68,68,0.3); color: #ef4444;">
+                    <i class="fa-solid fa-power-off"></i> Desconectar Nodo
+                </button>
+            </div>
+        </sidebar>
+
+        <main>
+            <div class="top-bar">
+                <div>
+                    <h1 id="page-title" style="font-weight: 700; font-size: 1.75rem; letter-spacing: -0.5px;">Consola Base</h1>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem;" id="live-clock">Cargando telemetría del sistema...</p>
+                </div>
+                <div style="display: flex; align-items: center; gap: 16px;">
+                    <button class="btn btn-secondary" id="theme-toggle" style="padding: 10px; border-radius: 50%;">
+                        <i class="fa-solid fa-moon"></i>
+                    </button>
+                    <div class="user-profile">
+                        <div style="width: 8px; height: 8px; background: #10b981; border-radius: 50%;"></div>
+                        <span style="font-size: 0.85rem; font-weight: 600;" id="user-display-name">Operador Principal</span>
+                    </div>
+                    <button id="mobile-nav-trigger" class="btn btn-secondary" style="display: none; padding: 10px;">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div id="view-dashboard" class="app-view">
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-header">Catálogo Total <i class="fa-solid fa-box"></i></div>
+                        <div class="metric-value" id="m-total-prods">0</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-header">Índice Activos <i class="fa-solid fa-circle-check" style="color:#10b981;"></i></div>
+                        <div class="metric-value" id="m-active-prods" style="color:#10b981;">0</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-header">Quiebres Críticos <i class="fa-solid fa-circle-exclamation" style="color:#ef4444;"></i></div>
+                        <div class="metric-value" id="m-out-stock" style="color:#ef4444;">0</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-header">Alertas de Reposición <i class="fa-solid fa-triangle-exclamation" style="color:#f59e0b;"></i></div>
+                        <div class="metric-value" id="m-low-stock" style="color:#f59e0b;">0</div>
+                    </div>
+                    <div class="metric-card" style="grid-column: span 2;">
+                        <div class="metric-header">Valor Estructural del Inventario (Venta) <i class="fa-solid fa-vault" style="color:var(--accent-cyan);"></i></div>
+                        <div class="metric-value" id="m-total-valuation" style="color:var(--accent-cyan); font-family:monospace;">Q0.00</div>
+                    </div>
+                </div>
+
+                <div class="charts-row">
+                    <div class="glass-panel" style="margin-bottom:0;">
+                        <div class="panel-title"><i class="fa-solid fa-chart-line" style="color:var(--accent-cyan)"></i> Dinámica Transaccional de Existencias</div>
+                        <div style="position: relative; height: 300px; width: 100%;">
+                            <canvas id="chart-movements"></canvas>
+                        </div>
+                    </div>
+                    <div class="glass-panel" style="margin-bottom:0;">
+                        <div class="panel-title"><i class="fa-solid fa-chart-pie" style="color:var(--accent-cyan)"></i> Densidad de Categorías</div>
+                        <div style="position: relative; height: 300px; width: 100%;">
+                            <canvas id="chart-categories"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-products" class="app-view" style="display: none;">
+                <div class="glass-panel" style="padding: 20px; margin-bottom: 24px; display: flex; flex-wrap: wrap; gap: 16px; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; gap: 12px; flex-grow: 1; max-width: 600px;">
+                        <input type="text" id="search-prod" class="form-control" placeholder="Filtrar por código, nombre o marca...">
+                        <select id="filter-cat" class="form-control" style="max-width: 200px;"><option value="">Todas las Categorías</option></select>
+                    </div>
+                    <div style="display: flex; gap: 12px;">
+                        <button class="btn btn-secondary" onclick="exportDataEngine('pdf', 'products')"><i class="fa-solid fa-file-pdf"></i> Exportar PDF</button>
+                        <button class="btn btn-secondary" onclick="exportDataEngine('excel', 'products')"><i class="fa-solid fa-file-excel"></i> Excel Matrix</button>
+                        <button class="btn btn-primary" id="btn-open-prod-modal"><i class="fa-solid fa-plus"></i> Registrar Ítem</button>
+                    </div>
+                </div>
+
+                <div class="glass-panel">
+                    <div class="table-responsive">
+                        <table class="enterprise-table" id="table-products-core">
+                            <thead>
+                                <tr>
+                                    <th>Imagen</th>
+                                    <th>Código</th>
+                                    <th>Nombre del Ítem</th>
+                                    <th>Taxonomía</th>
+                                    <th>Marca</th>
+                                    <th>Costo Compra</th>
+                                    <th>Precio Venta</th>
+                                    <th>Existencia</th>
+                                    <th>Estado Alerta</th>
+                                    <th>Acciones Globales</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody-products"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-categories" class="app-view" style="display: none;">
+                <div class="charts-row" style="grid-template-columns: 1fr 2fr;">
+                    <div class="glass-panel">
+                        <div class="panel-title">Nueva Unidad Correlativa</div>
+                        <form id="form-category-execution">
+                            <input type="hidden" id="cat-edit-id">
+                            <div class="form-group">
+                                <label class="form-label">Nombre Identificador</label>
+                                <input type="text" id="cat-name" class="form-control" required placeholder="Ej. Hardware Core">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Descripción Operativa</label>
+                                <textarea id="cat-desc" class="form-control" rows="4" placeholder="Especificaciones técnicas..."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">Guardar Categoría</button>
+                        </form>
+                    </div>
+                    <div class="glass-panel">
+                        <div class="panel-title">Estructura de Taxonomías Vigentes</div>
+                        <div class="table-responsive">
+                            <table class="enterprise-table">
+                                <thead>
+                                    <tr>
+                                        <th>Identificador</th>
+                                        <th>Descripción Técnica</th>
+                                        <th>Acciones Legales</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbody-categories"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-suppliers" class="app-view" style="display: none;">
+                <div class="charts-row" style="grid-template-columns: 1fr 2fr;">
+                    <div class="glass-panel">
+                        <div class="panel-title">Enlace de Proveedor</div>
+                        <form id="form-supplier-execution">
+                            <input type="hidden" id="sup-edit-id">
+                            <div class="form-group"><label class="form-label">Nombre de Enlace</label><input type="text" id="sup-name" class="form-control" required></div>
+                            <div class="form-group"><label class="form-label">Razón Social / Empresa</label><input type="text" id="sup-company" class="form-control" required></div>
+                            <div class="form-group"><label class="form-label">Canal Telefónico</label><input type="text" id="sup-phone" class="form-control" required></div>
+                            <div class="form-group"><label class="form-label">Correo Corporativo</label><input type="email" id="sup-email" class="form-control" required></div>
+                            <div class="form-group"><label class="form-label">Dirección Fiscal/Matriz</label><input type="text" id="sup-address" class="form-control" required></div>
+                            <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">Vincular Proveedor</button>
+                        </form>
+                    </div>
+                    <div class="glass-panel">
+                        <div class="panel-title">Matriz de Canales de Abastecimiento</div>
+                        <div class="table-responsive">
+                            <table class="enterprise-table">
+                                <thead>
+                                    <tr>
+                                        <th>Enlace / Empresa</th>
+                                        <th>Contacto Comercial</th>
+                                        <th>Dirección Fiscal</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbody-suppliers"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-ledger" class="app-view" style="display: none;">
+                <div class="glass-panel" style="padding: 20px; margin-bottom:24px; display:flex; justify-content:space-between; align-items:center;">
+                    <div style="font-size:0.9rem; color:var(--text-secondary);">Registro inmutable de mutaciones de stock.</div>
+                    <button class="btn btn-accent" id="btn-open-ledger-modal"><i class="fa-solid fa-shuffle"></i> Declarar Transmisión de Stock</button>
+                </div>
+                <div class="glass-panel">
+                    <div class="table-responsive">
+                        <table class="enterprise-table">
+                            <thead>
+                                <tr>
+                                    <th>Estampa de Tiempo (UTC)</th>
+                                    <th>Código Ítem</th>
+                                    <th>Nombre del Ítem</th>
+                                    <th>Naturaleza del Flujo</th>
+                                    <th>Magnitud</th>
+                                    <th>Justificación / Operador</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody-ledger"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal-overlay" id="modal-product">
+        <div class="modal-window">
+            <h3 class="panel-title" id="modal-product-title">Estructurar Nuevo Ítem de Inventario</h3>
+            <form id="form-product-execution">
+                <input type="hidden" id="prod-edit-id">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="form-group"><label class="form-label">Código SKU Único</label><input type="text" id="prod-code" class="form-control" required></div>
+                    <div class="form-group"><label class="form-label">Nombre Genérico del Producto</label><input type="text" id="prod-name" class="form-control" required></div>
+                </div>
+                <div class="form-group"><label class="form-label">Ficha Descriptiva Detallada</label><textarea id="prod-desc" class="form-control" rows="2"></textarea></div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="form-group"><label class="form-label">Taxonomía Relacionada</label><select id="prod-cat" class="form-control" required></select></div>
+                    <div class="form-group"><label class="form-label">Fabricante / Marca</label><input type="text" id="prod-brand" class="form-control" required></div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="form-group"><label class="form-label">Costo de Adquisición (Compra)</label><input type="number" step="0.01" id="prod-price-buy" class="form-control" required></div>
+                    <div class="form-group"><label class="form-label">Punto de Venta Oficial</label><input type="number" step="0.01" id="prod-price-sell" class="form-control" required></div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="form-group"><label class="form-label">Existencia Física Inicial</label><input type="number" id="prod-stock" class="form-control" required value="0"></div>
+                    <div class="form-group"><label class="form-label">Umbral de Resguardo (Mínimo)</label><input type="number" id="prod-stock-min" class="form-control" required value="5"></div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Imagen Corporativa / Enlace Digital (URL)</label>
+                    <input type="text" id="prod-img-url" class="form-control" placeholder="https://images.unsplash.com/... o dejar vacío para fallback modular">
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
+                    <button type="button" class="btn btn-secondary modal-close-trigger">Cerrar Declaración</button>
+                    <button type="submit" class="btn btn-primary">Compilar Registro</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-ledger">
+        <div class="modal-window" style="max-width: 480px;">
+            <h3 class="panel-title">Declarar Transmisión Estructural de Stock</h3>
+            <form id="form-ledger-execution">
+                <div class="form-group">
+                    <label class="form-label">Seleccionar Ítem Destino</label>
+                    <select id="ledger-prod-id" class="form-control" required></select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Vector de Naturaleza del Flujo</label>
+                    <select id="ledger-type" class="form-control" required>
+                        <option value="IN">Entrada (Aprovisionamiento por Compra/Ajuste)</option>
+                        <option value="OUT">Salida (Enajenación por Venta/Baja Técnica)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Magnitud Volumétrica (Cantidad)</label>
+                    <input type="number" id="ledger-qty" class="form-control" min="1" required value="1">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Justificación Operativa / Motivo</label>
+                    <input type="text" id="ledger-concept" class="form-control" required placeholder="Ej. Ajuste de auditoría de almacén principal">
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
+                    <button type="button" class="btn btn-secondary modal-close-trigger">Cancelar Operación</button>
+                    <button type="submit" class="btn btn-primary">Efectuar Mutación de Stock</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        // Core Web SDK Engine Initialization Pipeline
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
+        import { 
+            getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, signOut, onAuthStateChanged 
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { 
+            getFirestore, collection, doc, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot, query, orderBy, serverTimestamp, increment 
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBBAPMq2b7NXktK3gWzPRPz7UeogXpjz8w",
+            authDomain: "inventario-cda92.firebaseapp.com",
+            projectId: "inventario-cda92",
+            storageBucket: "inventario-cda92.firebasestorage.app",
+            messagingSenderId: "703791880810",
+            appId: "1:703791880810:web:1804f0b78ae3ce7f5e8813",
+            measurementId: "G-B33PS9DW9C"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Core State Engine Memory Architecture
+        let stateMemory = {
+            products: [],
+            categories: [],
+            suppliers: [],
+            ledger: [],
+            authMode: 'LOGIN' // [LOGIN, REGISTER]
+        };
+
+        // Charts Object Holders
+        let chartInstances = { movements: null, categories: null };
+
+        // Fallback Asset Image Generation Matrix Vector
+        const fallbackImg = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%23444' stroke-width='1'><rect width='20' height='20' x='2' y='2' rx='2'/><path d='m22 13-1.296-1.296a2.41 2.41 0 0 0-3.408 0L11 18'/><circle cx='12' cy='8' r='2'/></svg>";
+
+        // DOM Element Registry Interface Cache
+        const DOM = {
+            authContainer: document.getElementById('auth-container'),
+            appLayout: document.getElementById('app-layout'),
+            authForm: document.getElementById('auth-form'),
+            authEmail: document.getElementById('auth-email'),
+            authPassword: document.getElementById('auth-password'),
+            authToggleLink: document.getElementById('auth-toggle-link'),
+            authToggleMsg: document.getElementById('auth-toggle-msg'),
+            authForgotLink: document.getElementById('auth-forgot-link'),
+            btnAuthSubmit: document.getElementById('btn-auth-submit'),
+            btnLogout: document.getElementById('btn-logout'),
+            themeToggle: document.getElementById('theme-toggle'),
+            liveClock: document.getElementById('live-clock'),
+            userDisplayName: document.getElementById('user-display-name'),
+            pageTitle: document.getElementById('page-title'),
+            navItems: document.querySelectorAll('.nav-item'),
+            views: document.querySelectorAll('.app-view'),
+            
+            // Dashboard UI Counters
+            mTotalProds: document.getElementById('m-total-prods'),
+            mActiveProds: document.getElementById('m-active-prods'),
+            mOutStock: document.getElementById('m-out-stock'),
+            mLowStock: document.getElementById('m-low-stock'),
+            mTotalValuation: document.getElementById('m-total-valuation'),
+            
+            // Core CRUD Tables & Components
+            tbodyProducts: document.getElementById('tbody-products'),
+            tbodyCategories: document.getElementById('tbody-categories'),
+            tbodySuppliers: document.getElementById('tbody-suppliers'),
+            tbodyLedger: document.getElementById('tbody-ledger'),
+            searchProd: document.getElementById('search-prod'),
+            filterCat: document.getElementById('filter-cat'),
+            
+            // Forms & Modals Hooks
+            formProduct: document.getElementById('form-product-execution'),
+            formCategory: document.getElementById('form-category-execution'),
+            formSupplier: document.getElementById('form-supplier-execution'),
+            formLedger: document.getElementById('form-ledger-execution'),
+            modalProduct: document.getElementById('modal-product'),
+            modalLedger: document.getElementById('modal-ledger'),
+            btnOpenProdModal: document.getElementById('btn-open-prod-modal'),
+            btnOpenLedgerModal: document.getElementById('btn-open-ledger-modal'),
+            prodCatSelect: document.getElementById('prod-cat'),
+            ledgerProdSelect: document.getElementById('ledger-prod-id'),
+            mobileNavTrigger: document.getElementById('mobile-nav-trigger'),
+            appSidebar: document.getElementById('app-sidebar')
+        };
+
+        /* ==========================================
+         * APPLICATION CORE REALTIME SYNC ENGINE PIPELINES
+         * ========================================== */
+        function initRealtimeSyncPipelines() {
+            // Category Snapshot Wire
+            onSnapshot(query(collection(db, "categories"), orderBy("name")), (snapshot) => {
+                stateMemory.categories = [];
+                snapshot.forEach(docSnap => stateMemory.categories.push({ id: docSnap.id, ...docSnap.data() }));
+                renderCategoriesModule();
+                populateCategorySelects();
+            }, error => notifySystem(`Fallo crítico en sincronización de Taxonomías: ${error.message}`, 'error'));
+
+            // Suppliers Snapshot Wire
+            onSnapshot(query(collection(db, "suppliers"), orderBy("company")), (snapshot) => {
+                stateMemory.suppliers = [];
+                snapshot.forEach(docSnap => stateMemory.suppliers.push({ id: docSnap.id, ...docSnap.data() }));
+                renderSuppliersModule();
+            }, error => notifySystem(`Fallo crítico en sincronización de Proveedores: ${error.message}`, 'error'));
+
+            // Inventory Products Master Snapshot Wire
+            onSnapshot(query(collection(db, "products"), orderBy("code")), (snapshot) => {
+                stateMemory.products = [];
+                snapshot.forEach(docSnap => stateMemory.products.push({ id: docSnap.id, ...docSnap.data() }));
+                renderProductsModule();
+                populateLedgerProductSelect();
+                computeAnalyticalDashboardMetrics();
+            }, error => notifySystem(`Fallo crítico en sincronización de Inventario: ${error.message}`, 'error'));
+
+            // Ledger Historical Database Snapshot Wire
+            onSnapshot(query(collection(db, "ledger"), orderBy("timestamp", "desc")), (snapshot) => {
+                stateMemory.ledger = [];
+                snapshot.forEach(docSnap => stateMemory.ledger.push({ id: docSnap.id, ...docSnap.data() }));
+                renderLedgerModule();
+                updateDashboardChartsEngine();
+            }, error => notifySystem(`Fallo crítico en sincronización del Libro Diario: ${error.message}`, 'error'));
+        }
+
+        /* ==========================================
+         * RENDERING ARCHITECTURE ENGINE (UI COMPILERS)
+         * ========================================== */
+        function renderProductsModule() {
+            const searchQuery = DOM.searchProd.value.toLowerCase().trim();
+            const categoryFilter = DOM.filterCat.value;
+            
+            DOM.tbodyProducts.innerHTML = '';
+            
+            const filtered = stateMemory.products.filter(p => {
+                const matchQuery = !searchQuery || p.code.toLowerCase().includes(searchQuery) || 
+                                   p.name.toLowerCase().includes(searchQuery) || 
+                                   p.brand.toLowerCase().includes(searchQuery);
+                const matchCat = !categoryFilter || p.category === categoryFilter;
+                return matchQuery && matchCat;
+            });
+
+            if(filtered.length === 0) {
+                DOM.tbodyProducts.innerHTML = `<tr><td colspan="10" style="text-align:center; color:var(--text-secondary); padding: 32px;">Ningún espécimen o ítem de inventario califica para el filtro actual.</td></tr>`;
+                return;
+            }
+
+            filtered.forEach(p => {
+                let stockBadgeClass = 'badge-success';
+                let stockStatusText = 'Óptimo';
+                const stockVal = Number(p.stock);
+                const minVal = Number(p.stockMin);
+
+                if(stockVal === 0) {
+                    stockBadgeClass = 'badge-danger';
+                    stockStatusText = 'Agotado Crítico';
+                } else if(stockVal <= minVal) {
+                    stockBadgeClass = 'badge-warning';
+                    stockStatusText = 'Bajo Umbral';
+                }
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><img src="${p.imageUrl || fallbackImg}" class="product-thumbnail" onerror="this.src='${fallbackImg}'"></td>
+                    <td style="font-family:monospace; font-weight:600; color:var(--accent-cyan);">${p.code}</td>
+                    <td><div><strong>${p.name}</strong><br><small style="color:var(--text-secondary); max-width:200px; display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${p.description || 'Sin descripción'}</small></div></td>
+                    <td><span class="badge" style="background:rgba(255,255,255,0.05); color:var(--text-primary); border:1px solid var(--border-color);">${p.category}</span></td>
+                    <td>${p.brand}</td>
+                    <td style="font-family:monospace;">Q${Number(p.priceBuy).toFixed(2)}</td>
+                    <td style="font-family:monospace; font-weight:600;">Q${Number(p.priceSell).toFixed(2)}</td>
+                    <td style="font-family:monospace; font-weight:700; text-align:center;">${stockVal}</td>
+                    <td><span class="badge ${stockBadgeClass}">${stockStatusText}</span></td>
+                    <td>
+                        <div style="display:flex; gap:8px;">
+                            <button class="btn btn-secondary action-edit-prod" data-id="${p.id}" style="padding: 6px 12px; font-size: 0.8rem;"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button class="btn btn-secondary action-delete-prod" data-id="${p.id}" style="padding: 6px 12px; font-size: 0.8rem; border-color:rgba(239,68,68,0.2); color:#ef4444;"><i class="fa-solid fa-trash-can"></i></button>
+                        </div>
+                    </td>
+                `;
+                DOM.tbodyProducts.appendChild(tr);
+            });
+
+            // Re-wire dynamic operation event listeners
+            document.querySelectorAll('.action-edit-prod').forEach(b => b.addEventListener('click', (e) => loadProductToModal(e.currentTarget.dataset.id)));
+            document.querySelectorAll('.action-delete-prod').forEach(b => b.addEventListener('click', (e) => executeProductDeletion(e.currentTarget.dataset.id)));
+        }
+
+        function renderCategoriesModule() {
+            DOM.tbodyCategories.innerHTML = '';
+            if(stateMemory.categories.length === 0) {
+                DOM.tbodyCategories.innerHTML = `<tr><td colspan="3" style="text-align:center; color:var(--text-secondary);">No hay taxonomías catalogadas.</td></tr>`;
+                return;
+            }
+            stateMemory.categories.forEach(c => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${c.name}</strong></td>
+                    <td style="color:var(--text-secondary); font-size:0.85rem;">${c.description || 'Sin descripción técnica'}</td>
+                    <td>
+                        <div style="display:flex; gap:8px;">
+                            <button class="btn btn-secondary action-edit-cat" data-id="${c.id}" style="padding:6px 12px; font-size:0.8rem;"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button class="btn btn-secondary action-delete-cat" data-id="${c.id}" style="padding:6px 12px; font-size:0.8rem; color:#ef4444;"><i class="fa-solid fa-trash-can"></i></button>
+                        </div>
+                    </td>
+                `;
+                DOM.tbodyCategories.appendChild(tr);
+            });
+            document.querySelectorAll('.action-edit-cat').forEach(b => b.addEventListener('click', (e) => loadCategoryToForm(e.currentTarget.dataset.id)));
+            document.querySelectorAll('.action-delete-cat').forEach(b => b.addEventListener('click', (e) => executeCategoryDeletion(e.currentTarget.dataset.id)));
+        }
+
+        function renderSuppliersModule() {
+            DOM.tbodySuppliers.innerHTML = '';
+            if(stateMemory.suppliers.length === 0) {
+                DOM.tbodySuppliers.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-secondary);">No hay nodos de suministro enlazados.</td></tr>`;
+                return;
+            }
+            stateMemory.suppliers.forEach(s => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><div><strong>${s.company}</strong><br><small style="color:var(--text-secondary);">${s.name}</small></div></td>
+                    <td style="font-size:0.85rem;"><div><i class="fa-solid fa-phone" style="font-size:0.75rem;"></i> ${s.phone}<br><i class="fa-solid fa-envelope" style="font-size:0.75rem;"></i> ${s.email}</div></td>
+                    <td style="font-size:0.85rem; color:var(--text-secondary);">${s.address}</td>
+                    <td>
+                        <div style="display:flex; gap:8px;">
+                            <button class="btn btn-secondary action-edit-sup" data-id="${s.id}" style="padding:6px 12px; font-size:0.8rem;"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button class="btn btn-secondary action-delete-sup" data-id="${s.id}" style="padding:6px 12px; font-size:0.8rem; color:#ef4444;"><i class="fa-solid fa-trash-can"></i></button>
+                        </div>
+                    </td>
+                `;
+                DOM.tbodySuppliers.appendChild(tr);
+            });
+            document.querySelectorAll('.action-edit-sup').forEach(b => b.addEventListener('click', (e) => loadSupplierToForm(e.currentTarget.dataset.id)));
+            document.querySelectorAll('.action-delete-sup').forEach(b => b.addEventListener('click', (e) => executeSupplierDeletion(e.currentTarget.dataset.id)));
+        }
+
+        function renderLedgerModule() {
+            DOM.tbodyLedger.innerHTML = '';
+            if(stateMemory.ledger.length === 0) {
+                DOM.tbodyLedger.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-secondary);">Libro diario de inventario vacío.</td></tr>`;
+                return;
+            }
+            stateMemory.ledger.forEach(l => {
+                const dateStr = l.timestamp ? new Date(l.timestamp.seconds * 1000).toLocaleString() : 'En proceso...';
+                const vectorBadge = l.type === 'IN' ? '<span class="badge badge-success"><i class="fa-solid fa-circle-arrow-down"></i> ENTRADA</span>' : '<span class="badge badge-danger"><i class="fa-solid fa-circle-arrow-up"></i> SALIDA</span>';
+                const magnitudeSign = l.type === 'IN' ? `+${l.quantity}` : `-${l.quantity}`;
+                
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="font-size:0.85rem; color:var(--text-secondary);">${dateStr}</td>
+                    <td style="font-family:monospace; font-weight:600;">${l.productCode}</td>
+                    <td><strong>${l.productName}</strong></td>
+                    <td>${vectorBadge}</td>
+                    <td style="font-family:monospace; font-weight:700; ${l.type === 'IN' ? 'color:#10b981;' : 'color:#ef4444;'}">${magnitudeSign}</td>
+                    <td style="font-size:0.85rem; color:var(--text-secondary);">${l.concept}</td>
+                `;
+                DOM.tbodyLedger.appendChild(tr);
+            });
+        }
+
+        /* ==========================================
+         * METRICS COMPUTATION & CHART ENGINE FRAMEWORKS
+         * ========================================== */
+        function computeAnalyticalDashboardMetrics() {
+            let totalValuation = 0;
+            let criticalOut = 0;
+            let warningLow = 0;
+            let activeCount = 0;
+
+            stateMemory.products.forEach(p => {
+                const stock = Number(p.stock) || 0;
+                const min = Number(p.stockMin) || 0;
+                totalValuation += stock * (Number(p.priceSell) || 0);
+
+                if(stock === 0) {
+                    criticalOut++;
+                } else if(stock <= min) {
+                    warningLow++;
+                }
+                if(stock > 0) activeCount++;
+            });
+
+            DOM.mTotalProds.innerText = stateMemory.products.length;
+            DOM.mActiveProds.innerText = activeCount;
+            DOM.mOutStock.innerText = criticalOut;
+            DOM.mLowStock.innerText = warningLow;
+            DOM.mTotalValuation.innerText = `Q${totalValuation.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        }
+
+        function updateDashboardChartsEngine() {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const textClr = isDark ? '#98a2b3' : '#667085';
+            const borderClr = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
+
+            // Chart 1: Transaccional de Existencias (Time-Series Simulation from Ledger)
+            const lastLedgerEntries = [...stateMemory.ledger].slice(0, 7).reverse();
+            const labelsMovements = lastLedgerEntries.map(l => l.timestamp ? new Date(l.timestamp.seconds * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 'Ahora');
+            const dataIn = lastLedgerEntries.map(l => l.type === 'IN' ? l.quantity : 0);
+            const dataOut = lastLedgerEntries.map(l => l.type === 'OUT' ? l.quantity : 0);
+
+            if (chartInstances.movements) chartInstances.movements.destroy();
+            const ctx1 = document.getElementById('chart-movements').getContext('2-index');
+            if (ctx1) {
+                chartInstances.movements = new Chart(ctx1, {
+                    type: 'bar',
+                    data: {
+                        labels: labelsMovements.length ? labelsMovements : ['Sin Datos'],
+                        datasets: [
+                            { label: 'Entradas', data: dataIn.length ? dataIn : [0], backgroundColor: '#10b981', borderRadius: 4 },
+                            { label: 'Salidas', data: dataOut.length ? dataOut : [0], backgroundColor: '#ef4444', borderRadius: 4 }
+                        ]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: { legend: { labels: { color: textClr, font: { family: 'Plus Jakarta Sans' } } } },
+                        scales: {
+                            x: { grid: { color: borderClr }, ticks: { color: textClr } },
+                            y: { grid: { color: borderClr }, ticks: { color: textClr } }
+                        }
+                    }
+                });
+            }
+
+            // Chart 2: Taxonomías Density Distribution Chart
+            const catMap = {};
+            stateMemory.products.forEach(p => { catMap[p.category] = (catMap[p.category] || 0) + 1; });
+            const labelsCat = Object.keys(catMap);
+            const dataCat = Object.values(catMap);
+
+            if (chartInstances.categories) chartInstances.categories.destroy();
+            const ctx2 = document.getElementById('chart-categories').getContext('2-index');
+            if (ctx2) {
+                chartInstances.categories = new Chart(ctx2, {
+                    type: 'doughnut',
+                    data: {
+                        labels: labelsCat.length ? labelsCat : ['Ninguna'],
+                        datasets: [{
+                            data: dataCat.length ? dataCat : [1],
+                            backgroundColor: ['#00f0ff', '#0066ff', '#f59e0b', '#10b981', '#ef4444', '#8b5cf6', '#ec4899'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: { legend: { position: 'bottom', labels: { color: textClr, font: { family: 'Plus Jakarta Sans' } } } }
+                    }
+                });
+            }
+        }
+
+        /* ==========================================
+         * OPERATIONS HANDLING (FORM SUBMISSIONS & LOGIC)
+         * ========================================== */
+        DOM.formProduct.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const targetId = document.getElementById('prod-edit-id').value;
+            const productData = {
+                code: document.getElementById('prod-code').value.trim(),
+                name: document.getElementById('prod-name').value.trim(),
+                description: document.getElementById('prod-desc').value.trim(),
+                category: document.getElementById('prod-cat').value,
+                brand: document.getElementById('prod-brand').value.trim(),
+                priceBuy: Number(document.getElementById('prod-price-buy').value),
+                priceSell: Number(document.getElementById('prod-price-sell').value),
+                stock: Number(document.getElementById('prod-stock').value),
+                stockMin: Number(document.getElementById('prod-stock-min').value),
+                imageUrl: document.getElementById('prod-img-url').value.trim(),
+                updatedAt: serverTimestamp()
+            };
+
+            try {
+                if(targetId) {
+                    await updateDoc(doc(db, "products", targetId), productData);
+                    notifySystem("Ítem de inventario actualizado con éxito en la nube.");
+                } else {
+                    productData.createdAt = serverTimestamp();
+                    await addDoc(collection(db, "products"), productData);
+                    notifySystem("Nuevo producto compilado y guardado en base de datos.");
+                }
+                closeAllModals();
+                DOM.formProduct.reset();
+            } catch(err) {
+                notifySystem(`Error de persistencia: ${err.message}`, 'error');
+            }
+        });
+
+        async function loadProductToModal(id) {
+            const p = stateMemory.products.find(item => item.id === id);
+            if(!p) return;
+            document.getElementById('prod-edit-id').value = p.id;
+            document.getElementById('prod-code').value = p.code;
+            document.getElementById('prod-name').value = p.name;
+            document.getElementById('prod-desc').value = p.description || '';
+            document.getElementById('prod-cat').value = p.category;
+            document.getElementById('prod-brand').value = p.brand;
+            document.getElementById('prod-price-buy').value = p.priceBuy;
+            document.getElementById('prod-price-sell').value = p.priceSell;
+            document.getElementById('prod-stock').value = p.stock;
+            document.getElementById('prod-stock-min').value = p.stockMin;
+            document.getElementById('prod-img-url').value = p.imageUrl || '';
+            
+            document.getElementById('modal-product-title').innerText = "Modificar Atributos de Ítem";
+            openModal(DOM.modalProduct);
+        }
+
+        async function executeProductDeletion(id) {
+            Swal.fire({
+                title: '¿Confirmar purga?',
+                text: "Esta acción destruirá el registro del producto en el servidor de Firebase.",
+                icon: 'warning', showCancelButton: true,
+                confirmButtonColor: '#ef4444', cancelButtonColor: 'transparent',
+                confirmButtonText: 'Sí, purgar registro'
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    try {
+                        await deleteDoc(doc(db, "products", id));
+                        notifySystem("Ítem eliminado del ecosistema corporativo.");
+                    } catch(e) { notifySystem(e.message, 'error'); }
+                }
+            });
+        }
+
+        DOM.formCategory.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const targetId = document.getElementById('cat-edit-id').value;
+            const data = {
+                name: document.getElementById('cat-name').value.trim(),
+                description: document.getElementById('cat-desc').value.trim()
+            };
+            try {
+                if(targetId) {
+                    await updateDoc(doc(db, "categories", targetId), data);
+                    notifySystem("Taxonomía adaptada con éxito.");
+                } else {
+                    await addDoc(collection(db, "categories"), data);
+                    notifySystem("Nueva rama taxonómica inyectada.");
+                }
+                DOM.formCategory.reset();
+                document.getElementById('cat-edit-id').value = '';
+            } catch(err) { notifySystem(err.message, 'error'); }
+        });
+
+        function loadCategoryToForm(id) {
+            const c = stateMemory.categories.find(item => item.id === id);
+            if(!c) return;
+            document.getElementById('cat-edit-id').value = c.id;
+            document.getElementById('cat-name').value = c.name;
+            document.getElementById('cat-desc').value = c.description || '';
+        }
+
+        async function executeCategoryDeletion(id) {
+            try {
+                await deleteDoc(doc(db, "categories", id));
+                notifySystem("Categoría eliminada.");
+            } catch(e) { notifySystem(e.message, 'error'); }
+        }
+
+        DOM.formSupplier.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const targetId = document.getElementById('sup-edit-id').value;
+            const data = {
+                name: document.getElementById('sup-name').value.trim(),
+                company: document.getElementById('sup-company').value.trim(),
+                phone: document.getElementById('sup-phone').value.trim(),
+                email: document.getElementById('sup-email').value.trim(),
+                address: document.getElementById('sup-address').value.trim()
+            };
+            try {
+                if(targetId) {
+                    await updateDoc(doc(db, "suppliers", targetId), data);
+                    notifySystem("Enlace logístico actualizado.");
+                } else {
+                    await addDoc(collection(db, "suppliers"), data);
+                    notifySystem("Proveedor enlazado a la red.");
+                }
+                DOM.formSupplier.reset();
+                document.getElementById('sup-edit-id').value = '';
+            } catch(err) { notifySystem(err.message, 'error'); }
+        });
+
+        function loadSupplierToForm(id) {
+            const s = stateMemory.suppliers.find(item => item.id === id);
+            if(!s) return;
+            document.getElementById('sup-edit-id').value = s.id;
+            document.getElementById('sup-name').value = s.name;
+            document.getElementById('sup-company').value = s.company;
+            document.getElementById('sup-phone').value = s.phone;
+            document.getElementById('sup-email').value = s.email;
+            document.getElementById('sup-address').value = s.address;
+        }
+
+        async function executeSupplierDeletion(id) {
+            try {
+                await deleteDoc(doc(db, "suppliers", id));
+                notifySystem("Proveedor purgado.");
+            } catch(e) { notifySystem(e.message, 'error'); }
+        }
+
+        DOM.formLedger.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const prodId = DOM.ledgerProdSelect.value;
+            const vectorType = document.getElementById('ledger-type').value;
+            const quantity = Number(document.getElementById('ledger-qty').value);
+            const concept = document.getElementById('ledger-concept').value.trim();
+
+            const p = stateMemory.products.find(item => item.id === prodId);
+            if(!p) return;
+
+            if(vectorType === 'OUT' && p.stock < quantity) {
+                notifySystem("Violación de Regla de Almacén: No existe suficiente balance disponible para efectuar la salida.", 'error');
+                return;
+            }
+
+            try {
+                // Atomic mutation via incremental transaction vector trigger
+                const delta = vectorType === 'IN' ? quantity : -quantity;
+                await updateDoc(doc(db, "products", prodId), { stock: increment(delta) });
+
+                // Append Ledger Record entry trace
+                await addDoc(collection(db, "ledger"), {
+                    productId: prodId,
+                    productCode: p.code,
+                    productName: p.name,
+                    type: vectorType,
+                    quantity: quantity,
+                    concept: concept,
+                    timestamp: serverTimestamp()
+                });
+
+                notifySystem("Transmisión estricta procesada e inscrita en el Libro Diario.");
+                closeAllModals();
+                DOM.formLedger.reset();
+            } catch(err) { notifySystem(err.message, 'error'); }
+        });
+
+        /* ==========================================
+         * DATA EXPORT UTILITIES GENERATION MATRIX (PDF / EXCEL)
+         * ========================================== */
+        window.exportDataEngine = function(format, entity) {
+            if(entity === 'products') {
+                if(format === 'pdf') {
+                    const { jsPDF } = window.jspdf;
+                    const doc = new jsPDF();
+                    doc.text("SOUVREIGN CORE INVENTORY REPORT", 14, 15);
+                    doc.setFontSize(9);
+                    doc.text(`Generado: ${new Date().toLocaleString()}`, 14, 22);
+                    
+                    const rows = stateMemory.products.map(p => [p.code, p.name, p.category, p.brand, `Q${p.priceSell}`, p.stock]);
+                    doc.autoTable({
+                        startY: 28,
+                        head: [['SKU', 'Nombre del Item', 'Taxonomía', 'Marca', 'Precio Venta', 'Existencia']],
+                        body: rows
+                    });
+                    doc.save(`souvreign_inventory_${Date.now()}.pdf`);
+                } else if(format === 'excel') {
+                    const ws = XLSX.utils.json_to_sheet(stateMemory.products.map(p => ({
+                        SKU: p.code, Nombre: p.name, Descripcion: p.description, Categoría: p.category, Marca: p.brand, CostoCompra: p.priceBuy, PrecioVenta: p.priceSell, Existencia: p.stock, Minimo: p.stockMin
+                    })));
+                    const wb = XLSX.utils.book_new();
+                    XLSX.utils.book_append_sheet(wb, ws, "Inventario");
+                    XLSX.writeFile(wb, `souvreign_matrix_${Date.now()}.xlsx`);
+                }
+                notifySystem("Reporte maestro exportado con éxito.");
+            }
+        };
+
+        /* ==========================================
+         * AUTHENTICATION CONTROLLER SUB-SYSTEM ARCHITECTURE
+         * ========================================== */
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                DOM.authContainer.style.display = 'none';
+                DOM.appLayout.style.visibility = 'visible';
+                DOM.userDisplayName.innerText = user.email;
+                initRealtimeSyncPipelines();
+                notifySystem(`Conexión establecida de forma segura. Operador: ${user.email}`);
+            } else {
+                DOM.authContainer.style.display = 'flex';
+                DOM.appLayout.style.visibility = 'hidden';
+            }
+        });
+
+        DOM.authForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = DOM.authEmail.value.trim();
+            const password = DOM.authPassword.value;
+
+            try {
+                if(stateMemory.authMode === 'LOGIN') {
+                    await signInWithEmailAndPassword(auth, email, password);
+                } else {
+                    await createUserWithEmailAndPassword(auth, email, password);
+                    notifySystem("Nueva credencial operativa inscrita con éxito.");
+                }
+            } catch(err) {
+                notifySystem(`Fallo de Autenticación: ${err.message}`, 'error');
+            }
+        });
+
+        DOM.authToggleLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            if(stateMemory.authMode === 'LOGIN') {
+                stateMemory.authMode = 'REGISTER';
+                DOM.btnAuthSubmit.innerHTML = `<i class="fa-solid fa-user-plus"></i> Registrar Nuevo Operador`;
+                DOM.authToggleMsg.innerText = "¿Ya posee clave homologada?";
+                DOM.authToggleLink.innerText = "Iniciar Sesión";
+            } else {
+                stateMemory.authMode = 'LOGIN';
+                DOM.btnAuthSubmit.innerHTML = `<i class="fa-solid fa-shield-halved"></i> Autenticar Sistema`;
+                DOM.authToggleMsg.innerText = "¿Nuevo operador?";
+                DOM.authToggleLink.innerText = "Registrar Credencial";
+            }
+        });
+
+        DOM.authForgotLink.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const email = DOM.authEmail.value.trim();
+            if(!email) { notifySystem("Escriba su correo en el campo correspondiente primero.", "warning"); return; }
+            try {
+                await sendPasswordResetEmail(auth, email);
+                notifySystem("Vínculo de restauración enviado al correo de contingencia.");
+            } catch(e) { notifySystem(e.message, 'error'); }
+        });
+
+        DOM.btnLogout.addEventListener('click', () => {
+            signOut(auth).then(() => notifySystem("Nodo desconectado correctamente."));
+        });
+
+        /* ==========================================
+         * USER INTERFACE DYNAMICS & DECORATIVE LOGIC
+         * ========================================== */
+        function notifySystem(text, type = 'success') {
+            Toastify({
+                text: text, duration: 4000, close: true, gravity: "top", position: "right",
+                style: {
+                    background: type === 'success' ? "linear-gradient(to right, #0066ff, #00f0ff)" : "linear-gradient(to right, #ef4444, #b91c1c)",
+                    borderRadius: "8px", fontStyle: "sans-serif", fontWeight: "600"
+                }
+            }).showToast();
+        }
+
+        // Navigation Switching Engine Architecture
+        DOM.navItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                DOM.navItems.forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+                
+                const targetView = item.dataset.target;
+                DOM.views.forEach(v => v.style.display = 'none');
+                document.getElementById(targetView).style.display = 'block';
+                
+                DOM.pageTitle.innerText = item.querySelector('a').innerText.trim();
+                if(window.innerWidth <= 992) DOM.appSidebar.classList.remove('open');
+
+                if(targetView === 'view-dashboard') updateDashboardChartsEngine();
+            });
+        });
+
+        // Theme Toggle Mechanism Trigger
+        DOM.themeToggle.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme');
+            const target = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', target);
+            DOM.themeToggle.innerHTML = target === 'dark' ? `<i class="fa-solid fa-moon"></i>` : `<i class="fa-solid fa-sun"></i>`;
+            updateDashboardChartsEngine();
+        });
+
+        // Modal Component UI Controllers
+        window.openModal = function(m) { m.classList.add('active'); };
+        window.closeAllModals = function() {
+            document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
+            DOM.formProduct.reset();
+            document.getElementById('prod-edit-id').value = '';
+            document.getElementById('modal-product-title').innerText = "Estructurar Nuevo Ítem de Inventario";
+        };
+
+        DOM.btnOpenProdModal.addEventListener('click', () => openModal(DOM.modalProduct));
+        DOM.btnOpenLedgerModal.addEventListener('click', () => openModal(DOM.modalLedger));
+        document.querySelectorAll('.modal-close-trigger').forEach(b => b.addEventListener('click', closeAllModals));
+
+        // Form Select Sync Injection Matrix
+        function populateCategorySelects() {
+            let options = '<option value="" disabled selected>Seleccione Taxonomía...</option>';
+            let filterOptions = '<option value="">Todas las Categorías</option>';
+            stateMemory.categories.forEach(c => {
+                options += `<option value="${c.name}">${c.name}</option>`;
+                filterOptions += `<option value="${c.name}">${c.name}</option>`;
+            });
+            DOM.prodCatSelect.innerHTML = options;
+            DOM.filterCat.innerHTML = filterOptions;
+        }
+
+        function populateLedgerProductSelect() {
+            let options = '<option value="" disabled selected>Seleccione Elemento de Destino...</option>';
+            stateMemory.products.forEach(p => { options += `<option value="${p.id}">${p.code} - ${p.name} (Stock: ${p.stock})</option>`; });
+            DOM.ledgerProdSelect.innerHTML = options;
+        }
+
+        DOM.searchProd.addEventListener('input', renderProductsModule);
+        DOM.filterCat.addEventListener('change', renderProductsModule);
+        DOM.mobileNavTrigger.addEventListener('click', () => DOM.appSidebar.classList.toggle('open'));
+
+        // Live Clock Tick Telemetry Vector
+        setInterval(() => {
+            DOM.liveClock.innerText = `Telemetría de Sistema // UTC Time: ${new Date().toUTCString()} // Ecosistema Conectado`;
+        }, 1000);
+    </script>
+</body>
+</html>
