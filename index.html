@@ -282,18 +282,6 @@
 
         .product-thumbnail { width: 40px; height: 40px; border-radius: 6px; object-fit: cover; }
 
-        /* Responsive Mobile Drawer */
-        .sidebar-backdrop {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.4);
-            z-index: 90;
-            opacity: 0;
-            pointer-events: none;
-            transition: var(--transition-smooth);
-        }
-        .sidebar-backdrop.visible { opacity: 1; pointer-events: auto; }
-
         @media (max-width: 1024px) {
             sidebar { transform: translateX(-100%); }
             sidebar.open { transform: translateX(0); }
@@ -386,7 +374,9 @@
                 <div class="glass-panel" style="padding: 16px; margin-bottom: 20px; display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap;">
                     <div style="display: flex; gap: 12px; flex-grow: 1; max-width: 600px;">
                         <input type="text" id="search-prod" class="form-control" placeholder="Buscar por código, nombre...">
-                        <select id="filter-cat" class="form-control" style="max-width: 200px;"><option value="">Todas las categorías</option></select>
+                        <select id="filter-cat" class="form-control" style="max-width: 200px;">
+                            <option value="">Todas las categorías</option>
+                        </select>
                     </div>
                     <div style="display: flex; gap: 8px;">
                         <button class="btn btn-secondary" onclick="exportDataEngine('pdf', 'products')"><i class="fa-solid fa-file-pdf"></i> PDF</button>
@@ -583,7 +573,6 @@
             getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot, query, orderBy, serverTimestamp, increment 
         } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // Firebase Config Original Inalterada
         const firebaseConfig = {
             apiKey: "AIzaSyBBAPMq2b7NXktK3gWzPRPz7UeogXpjz8w",
             authDomain: "inventario-cda92.firebaseapp.com",
@@ -601,7 +590,7 @@
         let chartInstances = { movements: null, categories: null };
         const fallbackImg = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='1'><rect width='20' height='20' x='2' y='2' rx='2'/><circle cx='12' cy='8' r='2'/></svg>";
 
-        // Mapeo Centralizado del DOM
+        // Centralized Mapping Framework
         const DOM = {
             appSidebar: document.getElementById('app-sidebar'),
             sidebarBackdrop: document.getElementById('sidebar-backdrop'),
@@ -665,6 +654,7 @@
             });
         }
 
+        // Module Renderers
         function renderProductsModule() {
             const searchQuery = DOM.searchProd.value.toLowerCase().trim();
             const categoryFilter = DOM.filterCat.value;
@@ -760,6 +750,7 @@
             });
         }
 
+        // Calculations & Metrics Engine
         function computeAnalyticalDashboardMetrics() {
             let totalValuation = 0; let criticalOut = 0; let warningLow = 0; let activeCount = 0;
             stateMemory.products.forEach(p => {
@@ -794,7 +785,12 @@
                         { label: 'Salidas', data: datasetOut, borderColor: '#ef4444', tension: 0.2 }
                     ]
                 },
-                options: { responsive: true, maintainAspectRatio: false }
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { labels: { color: textClr } } },
+                    scales: { x: { grid: { display: false }, ticks: { color: textClr } }, y: { grid: { display: false }, ticks: { color: textClr } } }
+                }
             });
 
             const catCounts = {};
@@ -808,11 +804,15 @@
                     labels: Object.keys(catCounts),
                     datasets: [{ data: Object.values(catCounts), backgroundColor: ['#00f0ff', '#ff4500', '#32cd32', '#ffd700'] }]
                 },
-                options: { responsive: true, maintainAspectRatio: false }
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'right', labels: { color: textClr } } }
+                }
             });
         }
 
-        // Form handlers & Database integrations
+        // Database Write Operations
         DOM.formProduct.addEventListener('submit', async (e) => {
             e.preventDefault();
             const targetId = document.getElementById('prod-edit-id').value;
@@ -941,6 +941,7 @@
             DOM.formLedger.reset();
         });
 
+        // Document Exportation Framework
         window.exportDataEngine = function(format, entity) {
             if(entity === 'products' && format === 'pdf') {
                 const { jsPDF } = window.jspdf;
@@ -986,31 +987,34 @@
         document.querySelectorAll('.modal-close-trigger').forEach(b => b.addEventListener('click', closeAllModals));
         document.querySelectorAll('.modal-overlay').forEach(m => m.addEventListener('click', e => { if (e.target === m) closeAllModals(); }));
 
-        // Mobile Sidebar - CONTROLADO CON SENTENCIAS DE SEGURIDAD CONTRA NULL TERMINATIONS
+        // ── Mobile Sidebar (CON PROTECCIÓN CONTRA TERMINACIONES NULL) ──
         function closeSidebar() {
-            if(DOM.appSidebar) DOM.appSidebar.classList.remove('open');
-            if(DOM.sidebarBackdrop) DOM.sidebarBackdrop.classList.remove('visible');
+            if (DOM.appSidebar) DOM.appSidebar.classList.remove('open');
+            if (DOM.sidebarBackdrop) DOM.sidebarBackdrop.classList.remove('visible');
         }
 
-        if(DOM.mobileNavTrigger) {
+        if (DOM.mobileNavTrigger) {
             DOM.mobileNavTrigger.addEventListener('click', () => {
-                if(DOM.appSidebar) DOM.appSidebar.classList.toggle('open');
-                if(DOM.sidebarBackdrop) DOM.sidebarBackdrop.classList.toggle('visible');
+                if (DOM.appSidebar) DOM.appSidebar.classList.toggle('open');
+                if (DOM.sidebarBackdrop) DOM.sidebarBackdrop.classList.toggle('visible');
             });
         }
 
-        if(DOM.sidebarBackdrop) {
+        if (DOM.sidebarBackdrop) {
             DOM.sidebarBackdrop.addEventListener('click', closeSidebar);
         }
 
+        // ── Search / Filter ──
         DOM.searchProd.addEventListener('input', renderProductsModule);
         DOM.filterCat.addEventListener('change', renderProductsModule);
 
+        // ── Live Clock ──
         setInterval(() => {
             const now = new Date();
             DOM.liveClock.innerText = now.toLocaleString('es-GT', { weekday:'short', year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit'});
         }, 1000);
 
+        // Setup Helpers
         function populateCategorySelects() {
             let options = '<option value="" disabled selected>Seleccione Categoría</option>';
             let filters = '<option value="">Todas las categorías</option>';
