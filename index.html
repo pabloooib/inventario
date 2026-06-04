@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" data-theme="dark">
+<html lang="es" data-theme="dark" data-palette="cyan">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,398 +7,301 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <style>
         :root {
-            --bg-base-dark: #07080a;
-            --bg-surface-dark: #0f1115;
-            --border-color-dark: #1f242c;
-            --text-primary-dark: #f3f4f6;
-            --text-secondary-dark: #6b7280;
-            --accent-cyan: #00f0ff;
-            --accent-cyan-glow: rgba(0, 240, 255, 0.15);
-            
-            --bg-base-light: #f9fafb;
-            --bg-surface-light: #ffffff;
-            --border-color-light: #e5e7eb;
-            --text-primary-light: #111827;
-            --text-secondary-light: #6b7280;
-
+            /* Variables Base de Estructura */
             --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --radius-lg: 16px;
+            --radius-md: 8px;
+            --radius-sm: 4px;
+            
+            /* Paleta por Defecto: Souvreign Cyan */
+            --bg-base: #060709;
+            --bg-surface: #0c0e12;
+            --border-color: #1a1e26;
+            --text-primary: #f3f4f6;
+            --text-secondary: #848d9a;
+            --accent: #00f0ff;
+            --accent-glow: rgba(0, 240, 255, 0.12);
+            --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
         }
 
-        [data-theme="dark"] {
-            --bg-base: var(--bg-base-dark);
-            --bg-surface: var(--bg-surface-dark);
-            --border-color: var(--border-color-dark);
-            --text-primary: var(--text-primary-dark);
-            --text-secondary: var(--text-secondary-dark);
-            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        /* Configuración de Paletas Estéticas Conmutables */
+        [data-palette="cyan"] {
+            --bg-base: #060709; --bg-surface: #0c0e12; --border-color: #1a1e26;
+            --text-primary: #f3f4f6; --text-secondary: #848d9a;
+            --accent: #00f0ff; --accent-glow: rgba(0, 240, 255, 0.12);
+        }
+        [data-palette="amber"] {
+            --bg-base: #0a0907; --bg-surface: #12100d; --border-color: #24201a;
+            --text-primary: #f7f4f0; --text-secondary: #968e82;
+            --accent: #ffb800; --accent-glow: rgba(255, 184, 0, 0.12);
+        }
+        [data-palette="crimson"] {
+            --bg-base: #0a0607; --bg-surface: #140d0e; --border-color: #26191b;
+            --text-primary: #f9f1f2; --text-secondary: #9c8587;
+            --accent: #ff2a4b; --accent-glow: rgba(255, 42, 75, 0.12);
+        }
+        [data-palette="moss"] {
+            --bg-base: #060907; --bg-surface: #0d120e; --border-color: #19261b;
+            --text-primary: #f1f6f2; --text-secondary: #859c88;
+            --accent: #00ff66; --accent-glow: rgba(0, 255, 102, 0.12);
         }
 
+        /* Modos Claros Adaptativos Avanzados */
         [data-theme="light"] {
-            --bg-base: var(--bg-base-light);
-            --bg-surface: var(--bg-surface-light);
-            --border-color: var(--border-color-light);
-            --text-primary: var(--text-primary-light);
-            --text-secondary: var(--text-secondary-light);
-            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            --bg-base: #f4f6f8;
+            --bg-surface: #ffffff;
+            --border-color: #d2d7df;
+            --text-primary: #0f141c;
+            --text-secondary: #5c6470;
+            --card-shadow: 0 8px 24px rgba(15, 20, 28, 0.06);
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'DM Sans', sans-serif;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'DM Sans', sans-serif; }
+        body { background-color: var(--bg-base); color: var(--text-primary); min-height: 100vh; transition: var(--transition-smooth); overflow-x: hidden; }
 
-        body {
-            background-color: var(--bg-base);
-            color: var(--text-primary);
-            min-height: 100vh;
-            transition: var(--transition-smooth);
+        /* ── INTERFAZ DE LOGIN (GOOGLE AUTH) ── */
+        #auth-gateway {
+            position: fixed; inset: 0; background: radial-gradient(circle at center, var(--bg-surface) 0%, var(--bg-base) 100%);
+            z-index: 9999; display: flex; align-items: center; justify-content: center; transition: var(--transition-smooth);
         }
-
-        #app-layout {
-            display: flex;
-            min-height: 100vh;
+        .auth-card {
+            background-color: var(--bg-surface); border: 1px solid var(--border-color); padding: 48px; border-radius: var(--radius-lg);
+            width: 100%; max-width: 420px; text-align: center; box-shadow: var(--card-shadow);
         }
+        .auth-brand { font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800; letter-spacing: 2px; margin-bottom: 8px; color: var(--text-primary); }
+        .auth-btn {
+            width: 100%; padding: 14px; background: var(--text-primary); color: var(--bg-base); border: none;
+            border-radius: var(--radius-md); font-weight: 600; cursor: pointer; display: inline-flex; align-items: center;
+            justify-content: center; gap: 12px; margin-top: 32px; transition: var(--transition-smooth); font-size: 0.95rem;
+        }
+        .auth-btn:hover { transform: translateY(-2px); box-shadow: 0 0 20px var(--accent-glow); }
 
-        /* Sidebar Styling */
+        /* ── ARQUITECTURA DE CONTENEDORES PRINCIPALES ── */
+        #app-layout { display: flex; min-height: 100vh; opacity: 0; transition: opacity 0.5s ease; }
+        #app-layout.authenticated { opacity: 1; }
+
         sidebar {
-            width: 280px;
-            background-color: var(--bg-surface);
-            border-right: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            position: fixed;
-            height: 100vh;
-            z-index: 100;
-            transition: var(--transition-smooth);
+            width: 280px; background-color: var(--bg-surface); border-right: 1px solid var(--border-color);
+            display: flex; flex-direction: column; position: fixed; height: 100vh; z-index: 100; transition: var(--transition-smooth);
         }
-
-        .sidebar-header {
-            padding: 24px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .sidebar-title {
-            font-family: 'Syne', sans-serif;
-            font-weight: 700;
-            font-size: 1.2rem;
-            letter-spacing: 1px;
-        }
-
-        .nav-menu {
-            list-style: none;
-            padding: 24px 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
+        .sidebar-header { padding: 32px 24px; display: flex; align-items: center; gap: 14px; border-bottom: 1px solid var(--border-color); }
+        .sidebar-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.3rem; letter-spacing: 1px; color: var(--text-primary); }
+        
+        .nav-menu { list-style: none; padding: 32px 16px; display: flex; flex-direction: column; gap: 6px; }
         .nav-item a {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            color: var(--text-secondary);
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 500;
-            transition: var(--transition-smooth);
+            display: flex; align-items: center; gap: 14px; padding: 14px 18px; color: var(--text-secondary);
+            text-decoration: none; border-radius: var(--radius-md); font-weight: 500; transition: var(--transition-smooth);
         }
+        .nav-item.active a, .nav-item a:hover { color: var(--text-primary); background-color: var(--bg-base); }
+        .nav-item.active a { box-shadow: inset 4px 0 0 var(--accent); color: var(--accent); }
 
-        .nav-item.active a, .nav-item a:hover {
-            color: var(--text-primary);
-            background-color: var(--bg-base);
+        main { margin-left: 280px; flex-grow: 1; padding: 48px; transition: var(--transition-smooth); }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 48px; }
+
+        /* CONTROLES DE ESTILO PERSONALIZADOS */
+        .style-hub { display: flex; align-items: center; gap: 12px; }
+        .palette-dropdown {
+            background-color: var(--bg-surface); color: var(--text-primary); border: 1px solid var(--border-color);
+            padding: 8px 12px; border-radius: var(--radius-md); font-size: 0.85rem; outline: none; cursor: pointer;
         }
-
-        .nav-item.active a {
-            box-shadow: inset 4px 0 0 var(--accent-cyan);
-        }
-
-        /* Workspace Core */
-        main {
-            margin-left: 280px;
-            flex-grow: 1;
-            padding: 40px;
-            transition: var(--transition-smooth);
-        }
-
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 40px;
-        }
-
         .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background-color: var(--bg-surface);
-            border: 1px solid var(--border-color);
-            padding: 8px 16px;
-            border-radius: 20px;
+            display: flex; align-items: center; gap: 12px; background-color: var(--bg-surface);
+            border: 1px solid var(--border-color); padding: 6px 16px; border-radius: 30px;
         }
+        .user-avatar { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; border: 1px solid var(--accent); }
 
-        /* Analytical Cards */
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 24px;
-            margin-bottom: 40px;
-        }
-
+        /* TARJETAS METRICAS AESTHETIC */
+        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; margin-bottom: 40px; }
         .metric-card {
-            background-color: var(--bg-surface);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 24px;
-            box-shadow: var(--card-shadow);
+            background-color: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-lg);
+            padding: 28px; box-shadow: var(--card-shadow); border-top: 2px solid transparent; transition: var(--transition-smooth);
         }
+        .metric-card:hover { border-top-color: var(--accent); transform: translateY(-2px); }
+        .metric-header { display: flex; justify-content: space-between; align-items: center; color: var(--text-secondary); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .metric-value { font-size: 2.2rem; font-weight: 700; margin-top: 12px; font-family: 'Syne', sans-serif; }
 
-        .metric-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            color: var(--text-secondary);
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 12px;
-        }
+        .glass-panel { background-color: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 32px; box-shadow: var(--card-shadow); margin-bottom: 32px; }
+        .panel-title { font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 700; margin-bottom: 24px; }
 
-        .metric-value {
-            font-size: 2rem;
-            font-weight: 700;
-        }
-
-        /* Panels Components */
-        .glass-panel {
-            background-color: var(--bg-surface);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 24px;
-            box-shadow: var(--card-shadow);
-            margin-bottom: 24px;
-        }
-
-        .panel-title {
-            font-family: 'Syne', sans-serif;
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 20px;
-        }
-
-        /* Form Controls */
-        .form-group { margin-bottom: 20px; }
-        .form-label { display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 8px; color: var(--text-secondary); }
+        /* FORMULARIOS */
+        .form-group { margin-bottom: 24px; }
+        .form-label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 8px; color: var(--text-secondary); text-transform: uppercase; }
         .form-control {
-            width: 100%;
-            padding: 10px 14px;
-            background-color: var(--bg-base);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            color: var(--text-primary);
-            font-size: 0.9rem;
-            transition: var(--transition-smooth);
+            width: 100%; padding: 12px 16px; background-color: var(--bg-base); border: 1px solid var(--border-color);
+            border-radius: var(--radius-md); color: var(--text-primary); font-size: 0.9rem; transition: var(--transition-smooth);
         }
-        .form-control:focus {
-            outline: none;
-            border-color: var(--accent-cyan);
-            box-shadow: 0 0 0 3px var(--accent-cyan-glow);
-        }
+        .form-control:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
 
-        /* Buttons Core */
+        /* COMPONENTE EXCEL DROPZONE */
+        .excel-dropzone {
+            border: 2px dashed var(--border-color); border-radius: var(--radius-lg); padding: 40px; text-align: center;
+            background-color: var(--bg-base); cursor: pointer; transition: var(--transition-smooth); margin-bottom: 24px;
+        }
+        .excel-dropzone:hover, .excel-dropzone.dragover { border-color: var(--accent); background-color: var(--accent-glow); }
+        .excel-dropzone i { font-size: 2.5rem; color: var(--text-secondary); margin-bottom: 16px; }
+
+        /* TABLAS Y BOTONES */
         .btn {
-            padding: 10px 20px;
-            border-radius: 6px;
-            font-weight: 500;
-            font-size: 0.9rem;
-            cursor: pointer;
-            border: 1px solid transparent;
-            transition: var(--transition-smooth);
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
+            padding: 12px 24px; border-radius: var(--radius-md); font-weight: 600; font-size: 0.9rem;
+            cursor: pointer; border: 1px solid transparent; transition: var(--transition-smooth); display: inline-flex; align-items: center; gap: 8px;
         }
         .btn-primary { background-color: var(--text-primary); color: var(--bg-base); }
+        .btn-primary:hover { opacity: 0.9; }
         .btn-secondary { background-color: transparent; border: 1px solid var(--border-color); color: var(--text-primary); }
         .btn-secondary:hover { background-color: var(--border-color); }
-
-        /* Tables framework */
+        
         .table-responsive { width: 100%; overflow-x: auto; }
-        .enterprise-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; }
-        .enterprise-table th { padding: 16px; border-bottom: 1px solid var(--border-color); color: var(--text-secondary); font-weight: 500; }
-        .enterprise-table td { padding: 16px; border-bottom: 1px solid var(--border-color); }
-
-        /* Badges */
-        .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; }
+        .enterprise-table { width: 100%; border-collapse: collapse; text-align: left; }
+        .enterprise-table th { padding: 18px; border-bottom: 1px solid var(--border-color); color: var(--text-secondary); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; }
+        .enterprise-table td { padding: 18px; border-bottom: 1px solid var(--border-color); font-size: 0.9rem; }
+        
+        .product-thumbnail { width: 44px; height: 44px; border-radius: var(--radius-md); object-fit: cover; border: 1px solid var(--border-color); }
+        .badge { padding: 6px 12px; border-radius: var(--radius-sm); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
         .badge-success { background-color: rgba(16, 185, 129, 0.1); color: #10b981; }
         .badge-warning { background-color: rgba(245, 158, 11, 0.1); color: #f59e0b; }
         .badge-danger { background-color: rgba(239, 68, 68, 0.1); color: #ef4444; }
 
-        .charts-row { display: grid; grid-template-columns: 1.5fr 1fr; gap: 24px; margin-bottom: 24px; }
+        .charts-row { display: grid; grid-template-columns: 1.6fr 1fr; gap: 32px; margin-bottom: 32px; }
 
-        /* Modal Overlays */
+        /* MODALES */
         .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background-color: rgba(0,0,0,0.5);
-            backdrop-filter: blur(4px);
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: var(--transition-smooth);
+            position: fixed; inset: 0; background-color: rgba(0,0,0,0.7); backdrop-filter: blur(8px);
+            z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: var(--transition-smooth);
         }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
-        .modal-window {
-            background-color: var(--bg-surface);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            width: 100%;
-            max-width: 550px;
-            padding: 32px;
-            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3);
-        }
-
-        .product-thumbnail { width: 40px; height: 40px; border-radius: 6px; object-fit: cover; }
+        .modal-window { background-color: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-lg); width: 100%; max-width: 580px; padding: 40px; box-shadow: var(--card-shadow); }
 
         @media (max-width: 1024px) {
             sidebar { transform: translateX(-100%); }
             sidebar.open { transform: translateX(0); }
             main { margin-left: 0; padding: 24px; }
             .charts-row { grid-template-columns: 1fr; }
-            #mobile-nav-trigger { display: inline-flex !important; }
         }
     </style>
 </head>
 <body>
 
-    <div id="sidebar-backdrop" class="sidebar-backdrop"></div>
+    <div id="auth-gateway">
+        <div class="auth-card">
+            <div class="auth-brand">SOUVREIGN</div>
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">Persistence Inventory OS</p>
+            <button class="auth-btn" id="btn-google-login">
+                <i class="fa-brands fa-google"></i> Continuar con Google
+            </button>
+        </div>
+    </div>
 
     <div id="app-layout">
         <sidebar id="app-sidebar">
             <div class="sidebar-header">
-                <i class="fa-solid fa-layer-group" style="color: var(--accent-cyan); font-size: 1.2rem;"></i>
+                <i class="fa-solid fa-square-terminal" style="color: var(--accent); font-size: 1.4rem;"></i>
                 <div class="sidebar-title">SOUVREIGN</div>
             </div>
             <ul class="nav-menu">
-                <li class="nav-item active" data-target="view-dashboard"><a href="#"><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
-                <li class="nav-item" data-target="view-products"><a href="#"><i class="fa-solid fa-box"></i> Productos</a></li>
-                <li class="nav-item" data-target="view-categories"><a href="#"><i class="fa-solid fa-tags"></i> Categorías</a></li>
-                <li class="nav-item" data-target="view-suppliers"><a href="#"><i class="fa-solid fa-truck"></i> Proveedores</a></li>
-                <li class="nav-item" data-target="view-ledger"><a href="#"><i class="fa-solid fa-list-check"></i> Bitácora</a></li>
+                <li class="nav-item active" data-target="view-dashboard"><a href="#"><i class="fa-solid fa-chart-network"></i> Dashboard</a></li>
+                <li class="nav-item" data-target="view-products"><a href="#"><i class="fa-solid fa-box-archive"></i> Inventario</a></li>
+                <li class="nav-item" data-target="view-excel-upload"><a href="#"><i class="fa-solid fa-file-excel"></i> Importar Catálogo</a></li>
+                <li class="nav-item" data-target="view-suppliers"><a href="#"><i class="fa-solid fa-handshake"></i> Proveedores</a></li>
+                <li class="nav-item" data-target="view-ledger"><a href="#"><i class="fa-solid fa-shield-halved"></i> Auditoría Ledger</a></li>
             </ul>
+            <div style="margin-top: auto; padding: 24px; border-top: 1px solid var(--border-color);">
+                <button class="btn btn-secondary" id="btn-logout" style="width: 100%; justify-content: center; color: #ef4444;"><i class="fa-solid fa-power-off"></i> Desconectarse</button>
+            </div>
         </sidebar>
 
         <main>
             <div class="top-bar">
                 <div>
-                    <h1 id="page-title" style="font-weight: 700; font-size: 1.5rem;">Dashboard</h1>
-                    <p style="color: var(--text-secondary); font-size: 0.85rem;" id="live-clock">--:--</p>
+                    <h1 id="page-title" style="font-weight: 700; font-size: 1.8rem; font-family: 'Syne', sans-serif;">Dashboard</h1>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 4px;" id="live-clock">--:--</p>
                 </div>
-                <div style="display: flex; align-items: center; gap: 16px;">
+                
+                <div class="style-hub">
+                    <select id="palette-selector" class="palette-dropdown">
+                        <option value="cyan">🌌 Souvreign Cyan</option>
+                        <option value="amber">🪵 Gothic Amber</option>
+                        <option value="crimson">🩸 Crimson Void</option>
+                        <option value="moss">🍂 Nordic Moss</option>
+                    </select>
+                    
                     <button class="btn btn-secondary" id="theme-toggle" style="padding: 10px; border-radius: 50%;">
-                        <i class="fa-solid fa-moon"></i>
+                        <i class="fa-solid fa-brightness"></i>
                     </button>
+                    
                     <div class="user-profile">
-                        <div style="width: 8px; height: 8px; background-color: #10b981; border-radius: 50%;"></div>
-                        <span style="font-size: 0.85rem; font-weight: 500;" id="user-display-name">Operador</span>
+                        <img src="" id="user-avatar-img" class="user-avatar" alt="Profile">
+                        <span style="font-size: 0.85rem; font-weight: 600;" id="user-display-name">Verificando...</span>
                     </div>
-                    <button id="mobile-nav-trigger" class="btn btn-secondary" style="display: none; padding: 10px;">
-                        <i class="fa-solid fa-bars"></i>
-                    </button>
                 </div>
             </div>
 
             <div id="view-dashboard" class="app-view">
                 <div class="metrics-grid">
                     <div class="metric-card">
-                        <div class="metric-header">Productos Totales <i class="fa-solid fa-box"></i></div>
+                        <div class="metric-header">Ítems Totales <i class="fa-solid fa-box"></i></div>
                         <div class="metric-value" id="m-total-prods">0</div>
                     </div>
                     <div class="metric-card">
-                        <div class="metric-header">Índice Activos <i class="fa-solid fa-circle-check"></i></div>
+                        <div class="metric-header">Activos en Red <i class="fa-solid fa-wave-pulse"></i></div>
                         <div class="metric-value" id="m-active-prods">0</div>
                     </div>
                     <div class="metric-card">
-                        <div class="metric-header">Agotados <i class="fa-solid fa-circle-exclamation" style="color:#ef4444;"></i></div>
+                        <div class="metric-header">Ruptura Stock <i class="fa-solid fa-skull" style="color:#ef4444;"></i></div>
                         <div class="metric-value" id="m-out-stock" style="color:#ef4444;">0</div>
                     </div>
                     <div class="metric-card">
-                        <div class="metric-header">Stock Bajo <i class="fa-solid fa-triangle-exclamation" style="color:#f59e0b;"></i></div>
+                        <div class="metric-header">Alertas de Reserva <i class="fa-solid fa-triangle-exclamation" style="color:#f59e0b;"></i></div>
                         <div class="metric-value" id="m-low-stock" style="color:#f59e0b;">0</div>
-                    </div>
-                    <div class="metric-card" style="grid-column: span 2;">
-                        <div class="metric-header">Valorización del Almacén <i class="fa-solid fa-wallet"></i></div>
-                        <div class="metric-value" id="m-total-valuation">Q0.00</div>
                     </div>
                 </div>
 
                 <div class="charts-row">
-                    <div class="glass-panel" style="margin-bottom:0;">
-                        <div class="panel-title">Flujo de Movimientos Recientes</div>
-                        <div style="position: relative; height: 250px; width: 100%;">
-                            <canvas id="chart-movements"></canvas>
-                        </div>
+                    <div class="glass-panel">
+                        <div class="panel-title">Frecuencia Histórica de Mutaciones</div>
+                        <div style="position: relative; height: 280px;"><canvas id="chart-movements"></canvas></div>
                     </div>
-                    <div class="glass-panel" style="margin-bottom:0;">
-                        <div class="panel-title">Distribución por Categoría</div>
-                        <div style="position: relative; height: 250px; width: 100%;">
-                            <canvas id="chart-categories"></canvas>
-                        </div>
+                    <div class="glass-panel">
+                        <div class="panel-title">Métricas Estructurales de Volumen</div>
+                        <div style="position: relative; height: 280px;"><canvas id="chart-categories"></canvas></div>
                     </div>
                 </div>
             </div>
 
             <div id="view-products" class="app-view" style="display: none;">
-                <div class="glass-panel" style="padding: 16px; margin-bottom: 20px; display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap;">
-                    <div style="display: flex; gap: 12px; flex-grow: 1; max-width: 600px;">
-                        <input type="text" id="search-prod" class="form-control" placeholder="Buscar por código, nombre...">
-                        <select id="filter-cat" class="form-control" style="max-width: 200px;">
-                            <option value="">Todas las categorías</option>
-                        </select>
-                    </div>
-                    <div style="display: flex; gap: 8px;">
-                        <button class="btn btn-secondary" onclick="exportDataEngine('pdf', 'products')"><i class="fa-solid fa-file-pdf"></i> PDF</button>
-                        <button class="btn btn-secondary" onclick="exportDataEngine('excel', 'products')"><i class="fa-solid fa-file-excel"></i> Excel</button>
-                        <button class="btn btn-primary" id="btn-open-prod-modal"><i class="fa-solid fa-plus"></i> Nuevo Ítem</button>
+                <div class="glass-panel" style="padding: 20px; margin-bottom: 24px; display: flex; gap: 16px; align-items: center; justify-content: space-between; flex-wrap: wrap;">
+                    <input type="text" id="search-prod" class="form-control" placeholder="Buscar por clave o coincidencia fonética..." style="max-width: 400px; margin-bottom: 0;">
+                    <div style="display: flex; gap: 12px;">
+                        <button class="btn btn-secondary" onclick="exportDataEngine('pdf')"><i class="fa-solid fa-file-pdf"></i> Imprimir Core</button>
+                        <button class="btn btn-primary" id="btn-open-prod-modal"><i class="fa-solid fa-plus-large"></i> Añadir Registro</button>
                     </div>
                 </div>
 
                 <div class="glass-panel">
                     <div class="table-responsive">
-                        <table class="enterprise-table" id="table-products-core">
+                        <table class="enterprise-table">
                             <thead>
                                 <tr>
-                                    <th>Imagen</th>
-                                    <th>Código</th>
-                                    <th>Nombre</th>
-                                    <th>Categoría</th>
-                                    <th>Marca</th>
-                                    <th>Costo</th>
-                                    <th>Precio</th>
-                                    <th>Stock</th>
-                                    <th>Estado</th>
+                                    <th>Ficha</th>
+                                    <th>SKU Código</th>
+                                    <th>Descripción Nombre</th>
+                                    <th>Fabricante / Marca</th>
+                                    <th>Costo Compra</th>
+                                    <th>Precio Salida</th>
+                                    <th>Existencia</th>
+                                    <th>Nivel Global</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
@@ -408,53 +311,44 @@
                 </div>
             </div>
 
-            <div id="view-categories" class="app-view" style="display: none;">
-                <div class="charts-row" style="grid-template-columns: 1fr 2fr;">
-                    <div class="glass-panel">
-                        <div class="panel-title">Registrar Categoría</div>
-                        <form id="form-category-execution">
-                            <input type="hidden" id="cat-edit-id">
-                            <div class="form-group">
-                                <label class="form-label">Nombre</label>
-                                <input type="text" id="cat-name" class="form-control" required>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Descripción</label>
-                                <textarea id="cat-desc" class="form-control" rows="3"></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">Guardar Categoría</button>
-                        </form>
+            <div id="view-excel-upload" class="app-view" style="display: none;">
+                <div class="glass-panel">
+                    <div class="panel-title">Transmisión de Archivos de Datos Excel (.xlsx / .xls)</div>
+                    <p style="color: var(--text-secondary); margin-bottom: 24px; font-size: 0.9rem;">
+                        Sube hojas de cálculo estructuradas para alimentar masivamente el Inventario. Columnas aceptadas opcionalmente: <strong>Código, Nombre, Marca, Costo, Precio, Stock, Minimo</strong>. El nombre, costo y precio son obligatorios para construir el nodo.
+                    </p>
+                    
+                    <div class="excel-dropzone" id="excel-drop-area">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                        <p style="font-weight: 600;">Arrastra tu documento Excel aquí o haz clic para explorar tus ficheros locales</p>
+                        <input type="file" id="excel-file-input" accept=".xlsx, .xls" style="display: none;">
                     </div>
-                    <div class="glass-panel">
-                        <div class="panel-title">Listado de Categorías</div>
-                        <div class="table-responsive">
-                            <table class="enterprise-table">
-                                <thead>
-                                    <tr>
-                                        <th>Nombre</th>
-                                        <th>Descripción</th>
-                                        <th>Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tbody-categories"></tbody>
+                    
+                    <div id="excel-preview-area" style="display: none;">
+                        <div class="panel-title" style="font-size: 1rem;">Matriz de Pre-Visualización de Carga</div>
+                        <div class="table-responsive" style="max-height: 300px; margin-bottom: 24px;">
+                            <table class="enterprise-table" style="font-size: 0.8rem;">
+                                <thead id="excel-preview-thead"></thead>
+                                <tbody id="excel-preview-tbody"></tbody>
                             </table>
                         </div>
+                        <button class="btn btn-primary" id="btn-execute-excel-upload" style="width: 100%; justify-content: center;"><i class="fa-solid fa-bolt"></i> Ejecutar Inyección de Datos Masiva</button>
                     </div>
                 </div>
             </div>
 
             <div id="view-suppliers" class="app-view" style="display: none;">
-                <div class="charts-row" style="grid-template-columns: 1fr 2fr;">
+                <div class="charts-row" style="grid-template-columns: 1fr 1.8fr;">
                     <div class="glass-panel">
-                        <div class="panel-title">Enlace de Proveedor</div>
+                        <div class="panel-title">Vincular Canal Proveedor</div>
                         <form id="form-supplier-execution">
                             <input type="hidden" id="sup-edit-id">
-                            <div class="form-group"><label class="form-label">Nombre de Enlace</label><input type="text" id="sup-name" class="form-control" required></div>
-                            <div class="form-group"><label class="form-label">Empresa</label><input type="text" id="sup-company" class="form-control" required></div>
-                            <div class="form-group"><label class="form-label">Teléfono</label><input type="text" id="sup-phone" class="form-control" required></div>
-                            <div class="form-group"><label class="form-label">Correo</label><input type="email" id="sup-email" class="form-control" required></div>
-                            <div class="form-group"><label class="form-label">Dirección</label><input type="text" id="sup-address" class="form-control" required></div>
-                            <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">Vincular Proveedor</button>
+                            <div class="form-group"><label class="form-label">Representante</label><input type="text" id="sup-name" class="form-control" required></div>
+                            <div class="form-group"><label class="form-label">Corporación</label><input type="text" id="sup-company" class="form-control" required></div>
+                            <div class="form-group"><label class="form-label">Canal Telefónico</label><input type="text" id="sup-phone" class="form-control" required></div>
+                            <div class="form-group"><label class="form-label">E-Mail</label><input type="email" id="sup-email" class="form-control" required></div>
+                            <div class="form-group"><label class="form-label">Dirección Fiscal</label><input type="text" id="sup-address" class="form-control" required></div>
+                            <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">Guardar Proveedor</button>
                         </form>
                     </div>
                     <div class="glass-panel">
@@ -463,9 +357,9 @@
                             <table class="enterprise-table">
                                 <thead>
                                     <tr>
-                                        <th>Enlace / Empresa</th>
-                                        <th>Contacto Comercial</th>
-                                        <th>Dirección Fiscal</th>
+                                        <th>Enlace Corporativo</th>
+                                        <th>Contacto</th>
+                                        <th>Ubicación</th>
                                         <th>Acciones</th>
                                     </tr>
                                 </thead>
@@ -477,21 +371,21 @@
             </div>
 
             <div id="view-ledger" class="app-view" style="display: none;">
-                <div class="glass-panel" style="padding: 16px; margin-bottom:20px; display:flex; justify-content:space-between; align-items:center;">
-                    <div style="font-size:0.85rem; color:var(--text-secondary);">Registro inmutable de mutaciones de stock.</div>
-                    <button class="btn btn-secondary" id="btn-open-ledger-modal" style="border-color: var(--accent-cyan); color: var(--accent-cyan);"><i class="fa-solid fa-shuffle"></i> Declarar Transmisión de Stock</button>
+                <div class="glass-panel" style="padding: 20px; margin-bottom:24px; display:flex; justify-content:space-between; align-items:center;">
+                    <p style="font-size:0.85rem; color:var(--text-secondary);">Registro criptográfico e inmutable de mutaciones estructurales.</p>
+                    <button class="btn btn-secondary" id="btn-open-ledger-modal" style="border-color: var(--accent); color: var(--accent);"><i class="fa-solid fa-shuffle"></i> Declarar Mutación de Stock</button>
                 </div>
                 <div class="glass-panel">
                     <div class="table-responsive">
                         <table class="enterprise-table">
                             <thead>
                                 <tr>
-                                    <th>Estampa de Tiempo</th>
-                                    <th>Código Ítem</th>
-                                    <th>Nombre</th>
-                                    <th>Naturaleza</th>
+                                    <th>Timestamp</th>
+                                    <th>SKU</th>
+                                    <th>Ítem</th>
+                                    <th>Operación</th>
                                     <th>Cantidad</th>
-                                    <th>Motivo</th>
+                                    <th>Motivo Conceptual</th>
                                 </tr>
                             </thead>
                             <tbody id="tbody-ledger"></tbody>
@@ -504,64 +398,53 @@
 
     <div class="modal-overlay" id="modal-product">
         <div class="modal-window">
-            <h3 class="panel-title" id="modal-product-title">Estructurar Nuevo Ítem de Inventario</h3>
+            <h3 class="panel-title" id="modal-product-title">Estructurar Atributos de Ítem</h3>
             <form id="form-product-execution">
                 <input type="hidden" id="prod-edit-id">
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                     <div class="form-group"><label class="form-label">Código SKU</label><input type="text" id="prod-code" class="form-control"></div>
-                    <div class="form-group"><label class="form-label">Nombre</label><input type="text" id="prod-name" class="form-control" required></div>
+                    <div class="form-group"><label class="form-label">Nombre del Ítem</label><input type="text" id="prod-name" class="form-control" required></div>
                 </div>
                 <div class="form-group"><label class="form-label">Ficha Descriptiva</label><textarea id="prod-desc" class="form-control" rows="2"></textarea></div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                    <div class="form-group"><label class="form-label">Taxonomía Relacionada</label><select id="prod-cat" class="form-control"></select></div>
-                    <div class="form-group"><label class="form-label">Marca</label><input type="text" id="prod-brand" class="form-control"></div>
-                </div>
+                <div class="form-group"><label class="form-label">Marca de Manufactura</label><input type="text" id="prod-brand" class="form-control"></div>
+                
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                     <div class="form-group"><label class="form-label">Costo de Adquisición</label><input type="number" step="0.01" id="prod-price-buy" class="form-control" required></div>
-                    <div class="form-group"><label class="form-label">Precio Venta</label><input type="number" step="0.01" id="prod-price-sell" class="form-control" required></div>
+                    <div class="form-group"><label class="form-label">Precio de Venta</label><input type="number" step="0.01" id="prod-price-sell" class="form-control" required></div>
                 </div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                     <div class="form-group"><label class="form-label">Existencia Inicial</label><input type="number" id="prod-stock" class="form-control" required value="0"></div>
                     <div class="form-group"><label class="form-label">Mínimo de Alerta</label><input type="number" id="prod-stock-min" class="form-control" required value="5"></div>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Cargar Imagen desde Archivos</label>
+                    <label class="form-label">Cargar Documentación Visual (Imagen)</label>
                     <input type="file" id="prod-img-file" class="form-control" accept="image/*" style="padding: 6px 12px;">
                 </div>
-                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px;">
-                    <button type="button" class="btn btn-secondary modal-close-trigger">Cerrar</button>
-                    <button type="submit" class="btn btn-primary">Compilar Registro</button>
+                <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
+                    <button type="button" class="btn btn-secondary modal-close-trigger">Abortar</button>
+                    <button type="submit" class="btn btn-primary">Compilar Ficha</button>
                 </div>
             </form>
         </div>
     </div>
 
     <div class="modal-overlay" id="modal-ledger">
-        <div class="modal-window" style="max-width: 450px;">
-            <h3 class="panel-title">Declarar Transmisión Estructural de Stock</h3>
+        <div class="modal-window" style="max-width: 460px;">
+            <h3 class="panel-title">Declarar Transmisión Estructural</h3>
             <form id="form-ledger-execution">
+                <div class="form-group"><label class="form-label">Seleccionar Ítem Destino</label><select id="ledger-prod-id" class="form-control" required></select></div>
                 <div class="form-group">
-                    <label class="form-label">Seleccionar Ítem Destino</label>
-                    <select id="ledger-prod-id" class="form-control" required></select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Vector de Naturaleza</label>
+                    <label class="form-label">Vector de Dirección</label>
                     <select id="ledger-type" class="form-control" required>
                         <option value="IN">Entrada (Aprovisionamiento)</option>
-                        <option value="OUT">Salida (Enajenación / Baja)</option>
+                        <option value="OUT">Salida (Baja Operativa / Venta)</option>
                     </select>
                 </div>
-                <div class="form-group">
-                    <label class="form-label">Cantidad</label>
-                    <input type="number" id="ledger-qty" class="form-control" min="1" required value="1">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Justificación Operativa</label>
-                    <input type="text" id="ledger-concept" class="form-control" required placeholder="Ajuste de stock...">
-                </div>
-                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px;">
+                <div class="form-group"><label class="form-label">Unidades de Impacto</label><input type="number" id="ledger-qty" class="form-control" min="1" required value="1"></div>
+                <div class="form-group"><label class="form-label">Justificación Operativa</label><input type="text" id="ledger-concept" class="form-control" required placeholder="Auditoría interna de stock..."></div>
+                <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
                     <button type="button" class="btn btn-secondary modal-close-trigger">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Efectuar Mutación</button>
+                    <button type="submit" class="btn btn-primary">Firmar Cambios</button>
                 </div>
             </form>
         </div>
@@ -572,7 +455,11 @@
         import { 
             getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot, query, orderBy, serverTimestamp, increment 
         } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { 
+            getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged 
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
+        // Firebase Configuration Engine
         const firebaseConfig = {
             apiKey: "AIzaSyBBAPMq2b7NXktK3gWzPRPz7UeogXpjz8w",
             authDomain: "inventario-cda92.firebaseapp.com",
@@ -585,60 +472,187 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        const auth = getAuth(app);
+        const googleProvider = new GoogleAuthProvider();
 
-        let stateMemory = { products: [], categories: [], suppliers: [], ledger: [] };
+        let stateMemory = { products: [], suppliers: [], ledger: [] };
         let chartInstances = { movements: null, categories: null };
-        const fallbackImg = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='1'><rect width='20' height='20' x='2' y='2' rx='2'/><circle cx='12' cy='8' r='2'/></svg>";
+        let parsedExcelData = null; // Buffer Temporal de Inyección Masiva
+        const fallbackImg = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='none' stroke='%23222' stroke-width='1'><rect width='20' height='20' x='2' y='2' rx='2'/><path d='M12 2v20M2 12h20'/></svg>";
 
-        // Centralized Mapping Framework
+        // DOM Mapping Framework
         const DOM = {
-            appSidebar: document.getElementById('app-sidebar'),
-            sidebarBackdrop: document.getElementById('sidebar-backdrop'),
-            mobileNavTrigger: document.getElementById('mobile-nav-trigger'),
+            authGateway: document.getElementById('auth-gateway'),
+            appLayout: document.getElementById('app-layout'),
+            btnGoogleLogin: document.getElementById('btn-google-login'),
+            btnLogout: document.getElementById('btn-logout'),
+            userDisplayName: document.getElementById('user-display-name'),
+            userAvatarImg: document.getElementById('user-avatar-img'),
+            paletteSelector: document.getElementById('palette-selector'),
             themeToggle: document.getElementById('theme-toggle'),
+            appSidebar: document.getElementById('app-sidebar'),
             liveClock: document.getElementById('live-clock'),
             pageTitle: document.getElementById('page-title'),
             navItems: document.querySelectorAll('.nav-item'),
             views: document.querySelectorAll('.app-view'),
-            mTotalProds: document.getElementById('m-total-prods'),
-            mActiveProds: document.getElementById('m-active-prods'),
-            mOutStock: document.getElementById('m-out-stock'),
-            mLowStock: document.getElementById('m-low-stock'),
-            mTotalValuation: document.getElementById('m-total-valuation'),
             tbodyProducts: document.getElementById('tbody-products'),
-            tbodyCategories: document.getElementById('tbody-categories'),
             tbodySuppliers: document.getElementById('tbody-suppliers'),
             tbodyLedger: document.getElementById('tbody-ledger'),
             searchProd: document.getElementById('search-prod'),
-            filterCat: document.getElementById('filter-cat'),
             formProduct: document.getElementById('form-product-execution'),
-            formCategory: document.getElementById('form-category-execution'),
             formSupplier: document.getElementById('form-supplier-execution'),
             formLedger: document.getElementById('form-ledger-execution'),
             modalProduct: document.getElementById('modal-product'),
             modalLedger: document.getElementById('modal-ledger'),
             btnOpenProdModal: document.getElementById('btn-open-prod-modal'),
             btnOpenLedgerModal: document.getElementById('btn-open-ledger-modal'),
-            prodCatSelect: document.getElementById('prod-cat'),
-            ledgerProdSelect: document.getElementById('ledger-prod-id')
+            ledgerProdSelect: document.getElementById('ledger-prod-id'),
+            mTotalProds: document.getElementById('m-total-prods'),
+            mActiveProds: document.getElementById('m-active-prods'),
+            mOutStock: document.getElementById('m-out-stock'),
+            mLowStock: document.getElementById('m-low-stock'),
+            excelDropArea: document.getElementById('excel-drop-area'),
+            excelFileInput: document.getElementById('excel-file-input'),
+            excelPreviewArea: document.getElementById('excel-preview-area'),
+            excelPreviewThead: document.getElementById('excel-preview-thead'),
+            excelPreviewTbody: document.getElementById('excel-preview-tbody'),
+            btnExecuteExcelUpload: document.getElementById('btn-execute-excel-upload')
         };
 
-        // Realtime Streams Pipelines
-        function initRealtimeSyncPipelines() {
-            onSnapshot(query(collection(db, "categories"), orderBy("name")), (snapshot) => {
-                stateMemory.categories = [];
-                snapshot.forEach(docSnap => stateMemory.categories.push({ id: docSnap.id, ...docSnap.data() }));
-                renderCategoriesModule();
-                populateCategorySelects();
-            });
+        // ── CONTROL DE FLUJO DE SESIÓN DE FIREBASE ──
+        DOM.btnGoogleLogin.addEventListener('click', async () => {
+            try {
+                await signInWithPopup(auth, googleProvider);
+            } catch (error) {
+                Swal.fire('Error de Acceso', 'No se logró establecer enlace criptográfico con Google.', 'error');
+            }
+        });
 
+        DOM.btnLogout.addEventListener('click', () => signOut(auth));
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                DOM.authGateway.style.display = 'none';
+                DOM.appLayout.classList.add('authenticated');
+                DOM.userDisplayName.innerText = user.displayName || "Operador";
+                DOM.userAvatarImg.src = user.photoURL || fallbackImg;
+                initRealtimeSyncPipelines();
+            } else {
+                DOM.authGateway.style.display = 'flex';
+                DOM.appLayout.classList.remove('authenticated');
+            }
+        });
+
+        // Intercambio Dinámico de Paletas de Colores Cómodas
+        DOM.paletteSelector.addEventListener('change', (e) => {
+            document.documentElement.setAttribute('data-palette', e.target.value);
+            updateDashboardChartsEngine();
+        });
+
+        DOM.themeToggle.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme');
+            const target = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', target);
+            updateDashboardChartsEngine();
+        });
+
+        // ── MOTOR DE CARGA MASIVA DE EXCEL ──
+        DOM.excelDropArea.addEventListener('click', () => DOM.excelFileInput.click());
+        
+        DOM.excelDropArea.addEventListener('dragover', (e) => { e.preventDefault(); DOM.excelDropArea.classList.add('dragover'); });
+        DOM.excelDropArea.addEventListener('dragleave', () => DOM.excelDropArea.classList.remove('dragover'));
+        DOM.excelDropArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            DOM.excelDropArea.classList.remove('dragover');
+            if(e.dataTransfer.files.length) processExcelFile(e.dataTransfer.files[0]);
+        });
+
+        DOM.excelFileInput.addEventListener('change', (e) => {
+            if(e.target.files.length) processExcelFile(e.target.files[0]);
+        });
+
+        function processExcelFile(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+                
+                // Conversión nativa a objeto matriz JSON
+                const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                if(json.length < 2) {
+                    Swal.fire('Matriz de Datos Vacía', 'El libro de Excel no contiene registros procesables.', 'warning');
+                    return;
+                }
+                
+                renderExcelPreview(json);
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function renderExcelPreview(matrix) {
+            const headers = matrix[0];
+            parsedExcelData = [];
+
+            DOM.excelPreviewThead.innerHTML = `<tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>`;
+            DOM.excelPreviewTbody.innerHTML = '';
+
+            // Mapeo Inteligente de Columnas del Excel de Entrada
+            for(let i = 1; i < matrix.length; i++) {
+                const row = matrix[i];
+                if(!row.length || !row[1]) continue; // Valida que tenga al menos nombre
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = row.map(cell => `<td>${cell !== undefined ? cell : ''}</td>`).join('');
+                DOM.tbodyProducts.appendChild(tr);
+                DOM.excelPreviewTbody.appendChild(tr);
+
+                parsedExcelData.push({
+                    code: String(row[0] || '').trim(),
+                    name: String(row[1] || '').trim(),
+                    brand: String(row[2] || '').trim(),
+                    priceBuy: Number(row[3] || 0),
+                    priceSell: Number(row[4] || 0),
+                    stock: Number(row[5] || 0),
+                    stockMin: Number(row[6] || 5)
+                });
+            }
+            DOM.excelPreviewArea.style.display = 'block';
+        }
+
+        DOM.btnExecuteExcelUpload.addEventListener('click', async () => {
+            if(!parsedExcelData || !parsedExcelData.length) return;
+            Swal.fire({ title: 'Procesando Transmisión...', text: 'Escribiendo bloques en la Base de Datos.', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+            try {
+                for(const item of parsedExcelData) {
+                    await addDoc(collection(db, "products"), {
+                        ...item,
+                        description: 'Inyectado vía Carga Masiva Excel',
+                        imageUrl: '',
+                        createdAt: serverTimestamp(),
+                        updatedAt: serverTimestamp()
+                    });
+                }
+                Swal.fire('Carga Completada', `Se han sincronizado ${parsedExcelData.length} registros correctamente.`, 'success');
+                DOM.excelPreviewArea.style.display = 'none';
+                parsedExcelData = null;
+                switchWorkspaceView('view-products', 'Inventario');
+            } catch (err) {
+                Swal.fire('Fallo de Red', 'Surgió un error al escribir en Firestore.', 'error');
+            }
+        });
+
+        // Realtime Streams Pipelines (Firestore Direct Interface)
+        function initRealtimeSyncPipelines() {
             onSnapshot(query(collection(db, "suppliers"), orderBy("company")), (snapshot) => {
                 stateMemory.suppliers = [];
                 snapshot.forEach(docSnap => stateMemory.suppliers.push({ id: docSnap.id, ...docSnap.data() }));
                 renderSuppliersModule();
             });
 
-            onSnapshot(query(collection(db, "products"), orderBy("code")), (snapshot) => {
+            onSnapshot(query(collection(db, "products"), orderBy("name")), (snapshot) => {
                 stateMemory.products = [];
                 snapshot.forEach(docSnap => stateMemory.products.push({ id: docSnap.id, ...docSnap.data() }));
                 renderProductsModule();
@@ -654,40 +668,31 @@
             });
         }
 
-        // Module Renderers
+        // Renderizadores de Interfaz Limpia
         function renderProductsModule() {
-            const searchQuery = DOM.searchProd.value.toLowerCase().trim();
-            const categoryFilter = DOM.filterCat.value;
+            const queryStr = DOM.searchProd.value.toLowerCase().trim();
             DOM.tbodyProducts.innerHTML = '';
-            
-            const filtered = stateMemory.products.filter(p => {
-                const codeMatch = p.code ? p.code.toLowerCase().includes(searchQuery) : false;
-                const nameMatch = p.name ? p.name.toLowerCase().includes(searchQuery) : false;
-                const matchQuery = !searchQuery || codeMatch || nameMatch;
-                const matchCat = !categoryFilter || p.category === categoryFilter;
-                return matchQuery && matchCat;
-            });
+
+            const filtered = stateMemory.products.filter(p => !queryStr || p.name.toLowerCase().includes(queryStr) || (p.code && p.code.toLowerCase().includes(queryStr)));
 
             filtered.forEach(p => {
-                let stockBadgeClass = 'badge-success';
-                let stockStatusText = 'Óptimo';
-                if(p.stock === 0) { stockBadgeClass = 'badge-danger'; stockStatusText = 'Agotado'; }
-                else if(p.stock <= p.stockMin) { stockBadgeClass = 'badge-warning'; stockStatusText = 'Bajo Mínimo'; }
+                let badgeClass = 'badge-success'; let statusText = 'Óptimo';
+                if(p.stock === 0) { badgeClass = 'badge-danger'; statusText = 'Agotado'; }
+                else if(p.stock <= p.stockMin) { badgeClass = 'badge-warning'; statusText = 'Reserva Crítica'; }
 
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td><img src="${p.imageUrl || fallbackImg}" class="product-thumbnail" onerror="this.src='${fallbackImg}'"></td>
-                    <td>${p.code || 'N/A'}</td>
-                    <td><strong>${p.name}</strong></td>
-                    <td>${p.category || 'Sin categoría'}</td>
-                    <td>${p.brand || 'N/A'}</td>
+                    <td><code style="color:var(--accent);">${p.code || 'S/N'}</code></td>
+                    <td><strong>${p.name}</strong><br><small style="color:var(--text-secondary);">${p.description || ''}</small></td>
+                    <td>${p.brand || 'Genérico'}</td>
                     <td>Q${Number(p.priceBuy).toFixed(2)}</td>
                     <td>Q${Number(p.priceSell).toFixed(2)}</td>
-                    <td>${p.stock}</td>
-                    <td><span class="badge ${stockBadgeClass}">${stockStatusText}</span></td>
+                    <td><strong>${p.stock}</strong></td>
+                    <td><span class="badge ${badgeClass}">${statusText}</span></td>
                     <td>
-                        <button class="btn btn-secondary action-edit-prod" data-id="${p.id}" style="padding:4px 8px;"><i class="fa-solid fa-pen"></i></button>
-                        <button class="btn btn-secondary action-delete-prod" data-id="${p.id}" style="padding:4px 8px; color:#ef4444;"><i class="fa-solid fa-trash"></i></button>
+                        <button class="btn btn-secondary action-edit-prod" data-id="${p.id}" style="padding:6px 10px;"><i class="fa-solid fa-pen"></i></button>
+                        <button class="btn btn-secondary action-delete-prod" data-id="${p.id}" style="padding:6px 10px; color:#ef4444;"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 `;
                 DOM.tbodyProducts.appendChild(tr);
@@ -697,35 +702,17 @@
             document.querySelectorAll('.action-delete-prod').forEach(b => b.addEventListener('click', (e) => executeProductDeletion(e.currentTarget.dataset.id)));
         }
 
-        function renderCategoriesModule() {
-            DOM.tbodyCategories.innerHTML = '';
-            stateMemory.categories.forEach(c => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td><strong>${c.name}</strong></td>
-                    <td>${c.description || ''}</td>
-                    <td>
-                        <button class="btn btn-secondary action-edit-cat" data-id="${c.id}" style="padding:4px 8px;"><i class="fa-solid fa-pen"></i></button>
-                        <button class="btn btn-secondary action-delete-cat" data-id="${c.id}" style="padding:4px 8px; color:#ef4444;"><i class="fa-solid fa-trash"></i></button>
-                    </td>
-                `;
-                DOM.tbodyCategories.appendChild(tr);
-            });
-            document.querySelectorAll('.action-edit-cat').forEach(b => b.addEventListener('click', (e) => loadCategoryToForm(e.currentTarget.dataset.id)));
-            document.querySelectorAll('.action-delete-cat').forEach(b => b.addEventListener('click', (e) => executeCategoryDeletion(e.currentTarget.dataset.id)));
-        }
-
         function renderSuppliersModule() {
             DOM.tbodySuppliers.innerHTML = '';
             stateMemory.suppliers.forEach(s => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td><strong>${s.company}</strong><br><small>${s.name}</small></td>
-                    <td>${s.phone}<br>${s.email}</td>
+                    <td>${s.phone}<br><span style="font-size:0.8rem; color:var(--text-secondary);">${s.email}</span></td>
                     <td>${s.address}</td>
                     <td>
-                        <button class="btn btn-secondary action-edit-sup" data-id="${s.id}" style="padding:4px 8px;"><i class="fa-solid fa-pen"></i></button>
-                        <button class="btn btn-secondary action-delete-sup" data-id="${s.id}" style="padding:4px 8px; color:#ef4444;"><i class="fa-solid fa-trash"></i></button>
+                        <button class="btn btn-secondary action-edit-sup" data-id="${s.id}" style="padding:6px 10px;"><i class="fa-solid fa-pen"></i></button>
+                        <button class="btn btn-secondary action-delete-sup" data-id="${s.id}" style="padding:6px 10px; color:#ef4444;"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 `;
                 DOM.tbodySuppliers.appendChild(tr);
@@ -737,14 +724,14 @@
         function renderLedgerModule() {
             DOM.tbodyLedger.innerHTML = '';
             stateMemory.ledger.forEach(l => {
-                const dateStr = l.timestamp ? new Date(l.timestamp.seconds * 1000).toLocaleString() : 'Reciente';
-                const vectorBadge = l.type === 'IN' ? '<span class="badge badge-success">ENTRADA</span>' : '<span class="badge badge-danger">SALIDA</span>';
+                const date = l.timestamp ? new Date(l.timestamp.seconds * 1000).toLocaleString() : 'Just Now';
+                const operationBadge = l.type === 'IN' ? '<span class="badge badge-success">Entrada</span>' : '<span class="badge badge-danger">Salida</span>';
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td>${dateStr}</td>
-                    <td>${l.productCode || 'N/A'}</td>
+                    <td>${date}</td>
+                    <td><code>${l.productCode || 'S/N'}</code></td>
                     <td>${l.productName}</td>
-                    <td>${vectorBadge}</td>
+                    <td>${operationBadge}</td>
                     <td><strong>${l.quantity}</strong></td>
                     <td>${l.concept}</td>
                 `;
@@ -752,27 +739,30 @@
             });
         }
 
-        // Calculations & Metrics Engine
+        // Dashboard Metrics Calculator
         function computeAnalyticalDashboardMetrics() {
-            let totalValuation = 0; let criticalOut = 0; let warningLow = 0; let activeCount = 0;
+            let val = 0; let active = 0; let outStock = 0; let lowStock = 0;
             stateMemory.products.forEach(p => {
-                totalValuation += (p.stock * p.priceSell);
-                if(p.stock === 0) criticalOut++; else if(p.stock <= p.stockMin) warningLow++;
-                if(p.stock > 0) activeCount++;
+                val += (p.stock * p.priceSell);
+                if(p.stock === 0) outStock++; else if(p.stock <= p.stockMin) lowStock++;
+                if(p.stock > 0) active++;
             });
             DOM.mTotalProds.innerText = stateMemory.products.length;
-            DOM.mActiveProds.innerText = activeCount;
-            DOM.mOutStock.innerText = criticalOut;
-            DOM.mLowStock.innerText = warningLow;
-            DOM.mTotalValuation.innerText = `Q${totalValuation.toFixed(2)}`;
+            DOM.mActiveProds.innerText = active;
+            DOM.mOutStock.innerText = outStock;
+            DOM.mLowStock.innerText = lowStock;
         }
 
+        // Line and Doughnut Dynamic Charts Engine
         function updateDashboardChartsEngine() {
-            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-            const textClr = isDark ? '#6b7280' : '#9ca3af';
+            const currentPalette = document.documentElement.getAttribute('data-palette') || 'cyan';
+            let themeColor = '#00f0ff';
+            if(currentPalette === 'amber') themeColor = '#ffb800';
+            if(currentPalette === 'crimson') themeColor = '#ff2a4b';
+            if(currentPalette === 'moss') themeColor = '#00ff66';
 
-            const lastMovements = [...stateMemory.ledger].slice(0, 6).reverse();
-            const labels = lastMovements.map(m => m.timestamp ? new Date(m.timestamp.seconds * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 'Ahora');
+            const lastMovements = [...stateMemory.ledger].slice(0, 7).reverse();
+            const labels = lastMovements.map(m => m.timestamp ? new Date(m.timestamp.seconds * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 'Sec');
             const datasetIn = lastMovements.map(m => m.type === 'IN' ? m.quantity : 0);
             const datasetOut = lastMovements.map(m => m.type === 'OUT' ? m.quantity : 0);
 
@@ -781,54 +771,39 @@
             chartInstances.movements = new Chart(ctx1, {
                 type: 'line',
                 data: {
-                    labels: labels.length ? labels : ['Sin Datos'],
+                    labels: labels.length ? labels : ['Sin Mutaciones'],
                     datasets: [
-                        { label: 'Entradas', data: datasetIn, borderColor: '#10b981', tension: 0.2 },
-                        { label: 'Salidas', data: datasetOut, borderColor: '#ef4444', tension: 0.2 }
+                        { label: 'Entradas', data: datasetIn, borderColor: '#10b981', tension: 0.15, fill: false },
+                        { label: 'Salidas', data: datasetOut, borderColor: '#ef4444', tension: 0.15, fill: false }
                     ]
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { labels: { color: textClr } } },
-                    scales: { x: { grid: { display: false }, ticks: { color: textClr } }, y: { grid: { display: false }, ticks: { color: textClr } } }
-                }
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false } }, y: { grid: { display: false } } } }
             });
 
-            const catCounts = {};
-            stateMemory.products.forEach(p => { 
-                const catName = p.category || 'Sin categoría';
-                catCounts[catName] = (catCounts[catName] || 0) + 1; 
-            });
+            // Agrupación por marca para gráfico circular estructural
+            const brandCount = {};
+            stateMemory.products.forEach(p => { const b = p.brand || 'Genérico'; brandCount[b] = (brandCount[b] || 0) + 1; });
 
             if (chartInstances.categories) chartInstances.categories.destroy();
             const ctx2 = document.getElementById('chart-categories').getContext('2d');
             chartInstances.categories = new Chart(ctx2, {
                 type: 'doughnut',
-                data: {
-                    labels: Object.keys(catCounts),
-                    datasets: [{ data: Object.values(catCounts), backgroundColor: ['#00f0ff', '#ff4500', '#32cd32', '#ffd700'] }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { position: 'right', labels: { color: textClr } } }
-                }
+                data: { labels: Object.keys(brandCount), datasets: [{ data: Object.values(brandCount), backgroundColor: [themeColor, '#5c6470', '#1a1e26', '#3b4252'] }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } }
             });
         }
 
-        // Database Write Operations (LÓGICA CONVERSIÓN DE IMAGEN FILE)
+        // Cuestiones del Formulario Unitario Individual de Producto
         DOM.formProduct.addEventListener('submit', async (e) => {
             e.preventDefault();
             const targetId = document.getElementById('prod-edit-id').value;
             const fileInput = document.getElementById('prod-img-file');
-            
-            const processSave = async (imgDataUrl = '') => {
+
+            const writeOperation = async (base64Img = '') => {
                 const data = {
                     code: document.getElementById('prod-code').value.trim(),
                     name: document.getElementById('prod-name').value.trim(),
                     description: document.getElementById('prod-desc').value.trim(),
-                    category: document.getElementById('prod-cat').value,
                     brand: document.getElementById('prod-brand').value.trim(),
                     priceBuy: Number(document.getElementById('prod-price-buy').value),
                     priceSell: Number(document.getElementById('prod-price-sell').value),
@@ -837,81 +812,49 @@
                     updatedAt: serverTimestamp()
                 };
 
-                // Si se cargó una nueva imagen la guarda, de lo contrario conserva la anterior en edición o queda vacía
-                if (imgDataUrl) {
-                    data.imageUrl = imgDataUrl;
-                } else if (targetId) {
-                    const existingProd = stateMemory.products.find(item => item.id === targetId);
-                    if (existingProd && existingProd.imageUrl) data.imageUrl = existingProd.imageUrl;
+                if(base64Img) data.imageUrl = base64Img;
+                else if (targetId) {
+                    const prev = stateMemory.products.find(i => i.id === targetId);
+                    if(prev && prev.imageUrl) data.imageUrl = prev.imageUrl;
                 }
 
-                if(targetId) {
-                    await updateDoc(doc(db, "products", targetId), data);
-                } else {
-                    data.createdAt = serverTimestamp();
-                    await addDoc(collection(db, "products"), data);
-                }
+                if(targetId) await updateDoc(doc(db, "products", targetId), data);
+                else { data.createdAt = serverTimestamp(); await addDoc(collection(db, "products"), data); }
+                
                 closeAllModals();
             };
 
-            // Lector de archivos físicos si el usuario seleccionó una imagen
-            if (fileInput.files && fileInput.files[0]) {
+            if(fileInput.files && fileInput.files[0]) {
                 const reader = new FileReader();
-                reader.onload = async function(event) {
-                    await processSave(event.target.result);
-                };
+                reader.onload = (el) => writeOperation(el.target.result);
                 reader.readAsDataURL(fileInput.files[0]);
             } else {
-                await processSave();
+                await writeOperation();
             }
         });
 
         function loadProductToModal(id) {
-            const p = stateMemory.products.find(item => item.id === id);
+            const p = stateMemory.products.find(i => i.id === id);
             if(!p) return;
             document.getElementById('prod-edit-id').value = p.id;
             document.getElementById('prod-code').value = p.code || '';
             document.getElementById('prod-name').value = p.name;
             document.getElementById('prod-desc').value = p.description || '';
-            document.getElementById('prod-cat').value = p.category || '';
             document.getElementById('prod-brand').value = p.brand || '';
             document.getElementById('prod-price-buy').value = p.priceBuy;
             document.getElementById('prod-price-sell').value = p.priceSell;
             document.getElementById('prod-stock').value = p.stock;
             document.getElementById('prod-stock-min').value = p.stockMin;
-            document.getElementById('prod-img-file').value = ''; // Resetea el input file por seguridad
-            document.getElementById('modal-product-title').innerText = "Modificar Atributos de Ítem";
+            document.getElementById('prod-img-file').value = '';
+            document.getElementById('modal-product-title').innerText = "Re-estructurar Ficha de Ítem";
             openModal(DOM.modalProduct);
         }
 
         async function executeProductDeletion(id) {
-            if(confirm("¿Eliminar este registro de forma permanente?")) {
-                await deleteDoc(doc(db, "products", id));
-            }
+            if(confirm("¿Destruir el registro del inventario permanentemente?")) await deleteDoc(doc(db, "products", id));
         }
 
-        DOM.formCategory.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const targetId = document.getElementById('cat-edit-id').value;
-            const data = { name: document.getElementById('cat-name').value.trim(), description: document.getElementById('cat-desc').value.trim() };
-            if(targetId) await updateDoc(doc(db, "categories", targetId), data);
-            else await addDoc(collection(db, "categories"), data);
-            DOM.formCategory.reset();
-            document.getElementById('cat-edit-id').value = '';
-        });
-
-        function loadCategoryToForm(id) {
-            const c = stateMemory.categories.find(item => item.id === id);
-            if(!c) return;
-            document.getElementById('cat-edit-id').value = c.id;
-            document.getElementById('cat-name').value = c.name;
-            document.getElementById('cat-desc').value = c.description || '';
-        }
-
-        async function executeCategoryDeletion(id) {
-            await deleteDoc(doc(db, "categories", id));
-        }
-
+        // Proveedores
         DOM.formSupplier.addEventListener('submit', async (e) => {
             e.preventDefault();
             const targetId = document.getElementById('sup-edit-id').value;
@@ -929,7 +872,7 @@
         });
 
         function loadSupplierToForm(id) {
-            const s = stateMemory.suppliers.find(item => item.id === id);
+            const s = stateMemory.suppliers.find(i => i.id === id);
             if(!s) return;
             document.getElementById('sup-edit-id').value = s.id;
             document.getElementById('sup-name').value = s.name;
@@ -943,6 +886,7 @@
             await deleteDoc(doc(db, "suppliers", id));
         }
 
+        // Gestión del Ledger
         DOM.formLedger.addEventListener('submit', async (e) => {
             e.preventDefault();
             const prodId = DOM.ledgerProdSelect.value;
@@ -950,124 +894,68 @@
             const qty = Number(document.getElementById('ledger-qty').value);
             const concept = document.getElementById('ledger-concept').value.trim();
 
-            const p = stateMemory.products.find(item => item.id === prodId);
+            const p = stateMemory.products.find(i => i.id === prodId);
             if(!p) return;
 
-            if(type === 'OUT' && p.stock < qty) {
-                alert("Existencias insuficientes.");
-                return;
-            }
+            if(type === 'OUT' && p.stock < qty) { Swal.fire('Error Operativo', 'Insuficiencia de stock físico.', 'error'); return; }
+            const factor = type === 'IN' ? qty : -qty;
 
-            const delta = type === 'IN' ? qty : -qty;
-            await updateDoc(doc(db, "products", prodId), { stock: increment(delta) });
-            await addDoc(collection(db, "ledger"), {
-                productId: prodId, productCode: p.code || '', productName: p.name,
-                type, quantity: qty, concept, timestamp: serverTimestamp()
-            });
-
+            await updateDoc(doc(db, "products", prodId), { stock: increment(factor) });
+            await addDoc(collection(db, "ledger"), { productId: prodId, productCode: p.code || '', productName: p.name, type, quantity: qty, concept, timestamp: serverTimestamp() });
             closeAllModals();
-            DOM.formLedger.reset();
         });
 
-        // Document Exportation Framework
-        window.exportDataEngine = function(format, entity) {
-            if(entity === 'products' && format === 'pdf') {
-                const { jsPDF } = window.jspdf;
-                const doc = new jsPDF();
-                doc.text("Inventario Maestro", 14, 15);
-                doc.autoTable({
-                    startY: 20,
-                    head: [['Código', 'Nombre', 'Categoría', 'Precio', 'Stock']],
-                    body: stateMemory.products.map(p => [p.code || 'N/A', p.name, p.category || 'N/A', p.priceSell, p.stock])
-                });
-                doc.save('inventario.pdf');
-            }
+        // Exportador de PDF Automático
+        window.exportDataEngine = function() {
+            const { jsPDF } = window.jspdf; const doc = new jsPDF();
+            doc.text("SOUVREIGN CORE INVENTORY LOG", 14, 15);
+            doc.autoTable({ startY: 20, head: [['SKU', 'Nombre', 'Costo', 'Precio', 'Existencia']], body: stateMemory.products.map(p => [p.code || 'N/A', p.name, p.priceBuy, p.priceSell, p.stock]) });
+            doc.save('inventario-maestro.pdf');
         };
 
-        // Navigation Framework
+        // Navegación de Pestañas de la Interfaz
         DOM.navItems.forEach(item => {
             item.addEventListener('click', (e) => {
                 e.preventDefault();
+                const target = item.dataset.target;
+                switchWorkspaceView(target, item.textContent.trim());
                 DOM.navItems.forEach(i => i.classList.remove('active'));
                 item.classList.add('active');
-                
-                DOM.views.forEach(v => v.style.display = 'none');
-                const target = item.dataset.target;
-                document.getElementById(target).style.display = 'block';
-                DOM.pageTitle.innerText = item.textContent.trim();
-                
-                if(target === 'view-dashboard') updateDashboardChartsEngine();
-                closeSidebar();
             });
         });
 
-        // Modals Layer Actions
+        function switchWorkspaceView(targetId, title) {
+            DOM.views.forEach(v => v.style.display = 'none');
+            document.getElementById(targetId).style.display = 'block';
+            DOM.pageTitle.innerText = title;
+            if(targetId === 'view-dashboard') updateDashboardChartsEngine();
+        }
+
+        // Modales Layer Helper
         window.openModal = function(m) { m.classList.add('active'); };
         window.closeAllModals = function() {
             document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
-            DOM.formProduct.reset();
-            document.getElementById('prod-edit-id').value = '';
-            document.getElementById('modal-product-title').innerText = "Nuevo producto";
+            DOM.formProduct.reset(); document.getElementById('prod-edit-id').value = '';
+            document.getElementById('modal-product-title').innerText = "Estructurar Nuevo Ítem de Inventario";
         };
 
         DOM.btnOpenProdModal.addEventListener('click', () => openModal(DOM.modalProduct));
         DOM.btnOpenLedgerModal.addEventListener('click', () => openModal(DOM.modalLedger));
         document.querySelectorAll('.modal-close-trigger').forEach(b => b.addEventListener('click', closeAllModals));
-        document.querySelectorAll('.modal-overlay').forEach(m => m.addEventListener('click', e => { if (e.target === m) closeAllModals(); }));
-
-        // Mobile Sidebar
-        function closeSidebar() {
-            if (DOM.appSidebar) DOM.appSidebar.classList.remove('open');
-            if (DOM.sidebarBackdrop) DOM.sidebarBackdrop.classList.remove('visible');
-        }
-
-        if (DOM.mobileNavTrigger) {
-            DOM.mobileNavTrigger.addEventListener('click', () => {
-                if (DOM.appSidebar) DOM.appSidebar.classList.toggle('open');
-                if (DOM.sidebarBackdrop) DOM.sidebarBackdrop.classList.toggle('visible');
-            });
-        }
-
-        if (DOM.sidebarBackdrop) {
-            DOM.sidebarBackdrop.addEventListener('click', closeSidebar);
-        }
-
-        // Search / Filter
-        DOM.searchProd.addEventListener('input', renderProductsModule);
-        DOM.filterCat.addEventListener('change', renderProductsModule);
-
-        // Live Clock
-        setInterval(() => {
-            const now = new Date();
-            DOM.liveClock.innerText = now.toLocaleString('es-GT', { weekday:'short', year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit'});
-        }, 1000);
-
-        // Setup Helpers
-        function populateCategorySelects() {
-            let options = '<option value="" disabled selected>Seleccione Categoría</option>';
-            let filters = '<option value="">Todas las categorías</option>';
-            stateMemory.categories.forEach(c => {
-                options += `<option value="${c.name}">${c.name}</option>`;
-                filters += `<option value="${c.name}">${c.name}</option>`;
-            });
-            DOM.prodCatSelect.innerHTML = options;
-            DOM.filterCat.innerHTML = filters;
-        }
-
+        
         function populateLedgerProductSelect() {
-            let options = '<option value="" disabled selected>Seleccione producto...</option>';
+            let options = '<option value="" disabled selected>Seleccione nodo destino...</option>';
             stateMemory.products.forEach(p => { options += `<option value="${p.id}">${p.code || 'S/N'} - ${p.name} (${p.stock})</option>`; });
             DOM.ledgerProdSelect.innerHTML = options;
         }
 
-        DOM.themeToggle.addEventListener('click', () => {
-            const current = document.documentElement.getAttribute('data-theme');
-            const next = current === 'dark' ? 'light' : 'dark';
-            document.documentElement.setAttribute('data-theme', next);
-            updateDashboardChartsEngine();
-        });
+        DOM.searchProd.addEventListener('input', renderProductsModule);
 
-        initRealtimeSyncPipelines();
+        // Reloj de Sincronización en Tiempo Real
+        setInterval(() => {
+            const now = new Date();
+            DOM.liveClock.innerText = now.toLocaleString('es-GT', { weekday:'short', year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit'});
+        }, 1000);
     </script>
 </body>
 </html>
